@@ -89,7 +89,7 @@
                   $("#msg").focus();
               };
               socket.onmessage =function(m) {
-                  console.log("Got message: " + m.data);
+                  console.log("Got message: " + m.data, JSON.parse(m.data));
                   $("#chat").append(m.data + "\n");
                   scrollToBottom();
               };
