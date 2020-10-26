@@ -1,8 +1,5 @@
 package org.ugomes.websockets;
 
-import java.util.Map;
-import java.util.ArrayList;
-import java.util.concurrent.ConcurrentHashMap;
 import javax.enterprise.context.ApplicationScoped;
 import javax.websocket.OnClose;
 import javax.websocket.OnError;
@@ -11,12 +8,10 @@ import javax.websocket.OnOpen;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 import javax.websocket.Session;
-import java.util.Arrays; 
-import java.util.Timer;
-import java.util.TimerTask;
-
+import java.util.*;
+import java.util.*;
+import java.util.stream.*;
 import org.ugomes.controllers.CloudDirectoryController;
-
 import com.google.gson.Gson; 
 
 @ServerEndpoint("/chat/{username}")         
@@ -66,7 +61,7 @@ public class CloudWebSocket {
 }
 
 class CloudFilesTimer extends TimerTask {
-    private String[] lastFileList;
+    private Set<Map<String, String>> lastFileList;
     private CloudDirectoryController cloudDirectoryController = new CloudDirectoryController();
     CloudWebSocket cloudWebSocket;
 
@@ -76,12 +71,16 @@ class CloudFilesTimer extends TimerTask {
 
     public void run() {
         Gson gson = new Gson();
-        String[] filesList = cloudDirectoryController.getFilesList();
-        String jsonStringified = gson.toJson(filesList);
+        try {
+            Set<Map<String, String>> filesList = cloudDirectoryController.getFilesList();
+            String jsonStringified = gson.toJson(filesList);
 
-        if(!Arrays.equals(filesList, this.lastFileList)) {
-            this.cloudWebSocket.broadcast(jsonStringified);
-            this.lastFileList = filesList;
+            if(!filesList.equals(this.lastFileList)) {
+                this.cloudWebSocket.broadcast(jsonStringified);
+                this.lastFileList = filesList;
+            }
+        } catch (Exception e) {
+            System.out.println(e);
         }
     }
 }

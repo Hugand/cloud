@@ -1,11 +1,13 @@
 package org.ugomes.controllers;
 
-import java.util.Map;
-import java.util.ArrayList;
 import java.io.File;
 import org.ugomes.configs.CloudProperties;
-// import org.eclipse.microprofile.config.inject.ConfigProperty;
 import javax.inject.Inject;
+import java.util.*;
+import java.util.stream.*;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.io.IOException;
 
 public class CloudDirectoryController {
     public CloudDirectoryController() { 
@@ -14,22 +16,49 @@ public class CloudDirectoryController {
     @Inject
     CloudProperties cloud = new CloudProperties();
 
-    public String[] getFilesList() {
+    public Set<Map<String, String>> getFilesList() throws IOException  {
         File cloudDirFiles = new File(CloudProperties.dir);
 
         String[] pathnames = cloudDirFiles.list();
 
-        // for (String pathname : pathnames) {
-        //     // Print the names of files and directories
-        //     System.out.println(pathname);
-        // }
+        Set<Map<String, String>> fileList = new HashSet<>();
+	    try (DirectoryStream<Path> stream = Files.newDirectoryStream(Paths.get(CloudProperties.dir))) {
+	        for (Path path : stream) {
+                Map<String, String> fileData = new HashMap<>();
+                BasicFileAttributes attr = Files.readAttributes(path, BasicFileAttributes.class);
 
-        // HashMap<String, String> map = new HashMap<>();
-        // map.put("key", "value");
-        // map.put("foo", "bar");
-        // map.put("aa", CLOUD_DIR);
-        
+                fileData.put("file_name", path.getFileName().toString());
+                fileData.put("file_size", getFileSize(path.toFile()));
+                fileData.put("file_created_at", attr.creationTime().toString());
+                fileData.put("type", this.getFileType(path.toFile()));
+                fileList.add(fileData);
+	        }
+	    }
+	    return fileList;
+    }
 
-        return pathnames;
+    private String getFileType(File file) {
+        return file.isDirectory() ? "folder" : "file";
+    }
+
+	private static long getFileSizeMegaBytes(File file) {
+		return (long) ((double) file.length() / (1024.0 * 1024.0));
+	}
+	
+	private static long getFileSizeKiloBytes(File file) {
+		return (long) ((double) file.length() / 1024.0);
+	}
+
+	private static long getFileSizeBytes(File file) {
+		return file.length();
+    }
+    
+    private static String getFileSize(File file) {
+        if(file.length() < 1024)
+            return getFileSizeBytes(file) + "B";
+        else if(getFileSizeKiloBytes(file) < 1024)
+            return getFileSizeKiloBytes(file) + "KB";
+        else 
+            return getFileSizeMegaBytes(file) + "MB";
     }
 }
