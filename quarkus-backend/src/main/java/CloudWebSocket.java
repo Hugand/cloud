@@ -11,7 +11,7 @@ import javax.websocket.OnOpen;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 import javax.websocket.Session;
-
+import java.util.Arrays; 
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -26,7 +26,7 @@ public class CloudWebSocket {
     private ArrayList<Session> sessions = new ArrayList<>();
     private Timer timer = new Timer();
 
-    public CloudWebSocket() {
+    CloudWebSocket() {
         timer.schedule(new CloudFilesTimer(this), 0, 1000);
     }
 
@@ -79,7 +79,7 @@ class CloudFilesTimer extends TimerTask {
         String[] filesList = cloudDirectoryController.getFilesList();
         String jsonStringified = gson.toJson(filesList);
 
-        if(filesList != this.lastFileList) {
+        if(!Arrays.equals(filesList, this.lastFileList)) {
             this.cloudWebSocket.broadcast(jsonStringified);
             this.lastFileList = filesList;
         }
