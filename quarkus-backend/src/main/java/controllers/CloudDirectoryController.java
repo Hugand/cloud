@@ -16,13 +16,9 @@ public class CloudDirectoryController {
     @Inject
     CloudProperties cloud = new CloudProperties();
 
-    public Set<Map<String, String>> getFilesList() throws IOException  {
-        File cloudDirFiles = new File(CloudProperties.dir);
-
-        String[] pathnames = cloudDirFiles.list();
-
+    public Set<Map<String, String>> getFilesList(String subDir) throws IOException  {
         Set<Map<String, String>> fileList = new HashSet<>();
-	    try (DirectoryStream<Path> stream = Files.newDirectoryStream(Paths.get(CloudProperties.dir))) {
+	    try (DirectoryStream<Path> stream = Files.newDirectoryStream(Paths.get(CloudProperties.dir + subDir))) {
 	        for (Path path : stream) {
                 Map<String, String> fileData = new HashMap<>();
                 BasicFileAttributes attr = Files.readAttributes(path, BasicFileAttributes.class);
