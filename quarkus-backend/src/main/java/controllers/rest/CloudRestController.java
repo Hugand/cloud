@@ -44,16 +44,18 @@ public class CloudRestController {
     private CloudDirectoryController cloudDirectoryController = new CloudDirectoryController();
     
     @POST
-    @Path("/upload")
+    @Path("/upload/{pathToDir}")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     public String fileUpload(@MultipartForm MultipartFormDataInput upload) {
         String fileName = "";
         
+
         Map<String, List<InputPart>> uploadForm = upload.getFormDataMap();
         List<InputPart> inputParts = uploadForm.get("file");
+        String dirToUpload = this.getDirName(uploadForm);
+
 
         for (InputPart inputPart : inputParts) {
-
          try {
             MultivaluedMap<String, String> header = inputPart.getHeaders();
             fileName = getFileName(header);
@@ -64,7 +66,7 @@ public class CloudRestController {
             byte [] bytes = IOUtils.toByteArray(inputStream);
                 
             //constructs upload file path
-            fileName = CloudProperties.dir + fileName;
+            fileName = CloudProperties.dir + "/" + dirToUpload + "/" + fileName;
                 
             writeFile(bytes,fileName);
                 
@@ -77,6 +79,21 @@ public class CloudRestController {
         }
         
         return "done";
+    }
+
+    private String getDirName(Map<String, List<InputPart>>  uploadForm) {
+
+        for (InputPart inputPart: uploadForm.get("dir")) {
+            try {
+                MultivaluedMap<String, String> header = inputPart.getHeaders();
+                String dirToUpload = inputPart.getBody(String.class, null);
+
+                return dirToUpload;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return "";
     }
     
     //get uploaded filename, is there a easy way in RESTEasy?

@@ -79,7 +79,6 @@
       <artifactId>resteasy-multipart-provider</artifactId>
     </dependency>
 
-
   </dependencies>
   <build>
     <plugins>
