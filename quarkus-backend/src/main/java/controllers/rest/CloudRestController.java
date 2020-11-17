@@ -19,14 +19,17 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import org.jboss.resteasy.annotations.jaxrs.PathParam;
+import javax.ws.rs.FormParam;
 
 import org.ugomes.configs.CloudProperties;
 import org.ugomes.controllers.CloudDirectoryController;
 import org.ugomes.controllers.rest.MultiPartBody;
+import org.ugomes.controllers.rest.RenameForm;
 import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
 import org.ugomes.models.CloudFile;
 
@@ -81,6 +84,43 @@ public class CloudRestController {
         return "done";
     }
 
+    @PUT
+    @Path("/rename")
+    public String rename(@MultipartForm RenameForm renameFormData) throws IOException {
+        // File (or directory) with old name
+        File original = new File(CloudProperties.dir + renameFormData.fileDir);
+
+        // File (or directory) with new name
+        File renamed = new File(CloudProperties.dir + renameFormData.newName);
+
+        System.out.println(original);
+        System.out.println(renamed);
+
+        if (renamed.exists())
+            throw new java.io.IOException("file exists");
+
+        // Rename file (or directory)
+        boolean success = original.renameTo(renamed);
+
+        if (!success) {
+            return "not renamed";
+        }else
+            return "success";
+    }
+
+    @DELETE
+    @Path("/{pathDirToDelete}")
+    public Map<String, String> delete(@PathParam String pathDirToDelete) {
+        Map<String, String> returnData = new HashMap<>();
+        try {
+            cloudDirectoryController.deleteFile(pathDirToDelete);
+            returnData.put("status", "true");
+        } catch (Exception e) {
+            returnData.put("status", "false");
+        }
+        return returnData;
+    }
+
     private String getDirName(Map<String, List<InputPart>>  uploadForm) {
 
         for (InputPart inputPart: uploadForm.get("dir")) {
@@ -128,18 +168,5 @@ public class CloudRestController {
         fop.flush();
         fop.close();
 
-    }
-
-    @DELETE
-    @Path("/{pathDirToDelete}")
-    public Map<String, String> delete(@PathParam String pathDirToDelete) {
-        Map<String, String> returnData = new HashMap<>();
-        try {
-            cloudDirectoryController.deleteFile(pathDirToDelete);
-            returnData.put("status", "true");
-        } catch (Exception e) {
-            returnData.put("status", "false");
-        }
-        return returnData;
     }
 }
