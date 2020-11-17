@@ -30,6 +30,7 @@ import org.ugomes.configs.CloudProperties;
 import org.ugomes.controllers.CloudDirectoryController;
 import org.ugomes.controllers.rest.MultiPartBody;
 import org.ugomes.controllers.rest.RenameForm;
+import org.ugomes.controllers.rest.MoveForm;
 import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
 import org.ugomes.models.CloudFile;
 
@@ -49,7 +50,7 @@ public class CloudRestController {
     @POST
     @Path("/upload/{pathToDir}")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
-    public String fileUpload(@MultipartForm MultipartFormDataInput upload) {
+    public String uploadFile(@MultipartForm MultipartFormDataInput upload) {
         String fileName = "";
         
 
@@ -86,15 +87,12 @@ public class CloudRestController {
 
     @PUT
     @Path("/rename")
-    public String rename(@MultipartForm RenameForm renameFormData) throws IOException {
+    public String renameFile(@MultipartForm RenameForm renameFormData) throws IOException {
         // File (or directory) with old name
         File original = new File(CloudProperties.dir + renameFormData.fileDir);
 
         // File (or directory) with new name
         File renamed = new File(CloudProperties.dir + renameFormData.newName);
-
-        System.out.println(original);
-        System.out.println(renamed);
 
         if (renamed.exists())
             throw new java.io.IOException("file exists");
@@ -108,9 +106,30 @@ public class CloudRestController {
             return "success";
     }
 
+    @PUT
+    @Path("/move")
+    public String moveFile(@MultipartForm MoveForm moveFormData) throws IOException {
+        // File (or directory) with old name
+        File original = new File(CloudProperties.dir + moveFormData.currDir + moveFormData.fileName);
+
+        // File (or directory) with new name
+        File dest = new File(CloudProperties.dir + moveFormData.newDir + moveFormData.fileName);
+
+        if (dest.exists())
+            throw new java.io.IOException("file exists");
+
+        // Rename file (or directory)
+        boolean success = original.renameTo(dest);
+
+        if (!success) {
+            return "not moved";
+        }else
+            return "success";
+    }
+
     @DELETE
     @Path("/{pathDirToDelete}")
-    public Map<String, String> delete(@PathParam String pathDirToDelete) {
+    public Map<String, String> deleteFile(@PathParam String pathDirToDelete) {
         Map<String, String> returnData = new HashMap<>();
         try {
             cloudDirectoryController.deleteFile(pathDirToDelete);
