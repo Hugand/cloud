@@ -111,7 +111,6 @@ public class CloudRestController {
     public String moveFile(@MultipartForm MoveForm moveFormData) throws IOException {
         // File (or directory) with old name
         File original = new File(CloudProperties.dir + moveFormData.currDir + moveFormData.fileName);
-
         // File (or directory) with new name
         File dest = new File(CloudProperties.dir + moveFormData.newDir + moveFormData.fileName);
 
@@ -128,7 +127,7 @@ public class CloudRestController {
     }
 
     @DELETE
-    @Path("/{pathDirToDelete}")
+    @Path("/delete/{pathDirToDelete}")
     public Map<String, String> deleteFile(@PathParam String pathDirToDelete) {
         Map<String, String> returnData = new HashMap<>();
         try {

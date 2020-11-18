@@ -7,11 +7,12 @@ function App() {
   const [ data, setData ] = useState([])
   const [ isConnected, setIsConnected ] = useState(false)
   const [ socket, setSocket ] = useState()
-  const [ currDir, setCurrDir ] = useState("")
-  const [ prevDir, setPrevDir ] = useState("./")
+  // const [ currDir, setCurrDir ] = useState("")
+
+  const [ dirs, setDirs ] = useState([])
+  const [ prevDir, setPrevDir ] = useState([])
 
   useEffect(() => {
-
     if (!isConnected) {
       console.log("Connecting...")
       const socket = new WebSocket("ws://localhost:8080/cloud_websocket")
@@ -25,40 +26,71 @@ function App() {
       };
 
       socket.onmessage = m => {
-        console.log(JSON.parse(m.data));
+        // console.log(JSON.parse(m.data));
         setData(JSON.parse(m.data))
       };
 
       setSocket(socket)
     }
-
   }, [])
 
-  const currDirOnChange = (e) => {
-    setCurrDir(e.target.value)
-  }
+  // const currDirOnChange = (e) => {
+  //   setCurrDir(e.target.value)
+  // }
 
-  const changeDir = (dir) => {
+  const changeDir = (dir, _prevDir) => {
     if (isConnected) {
       const data = {
           type: "cd",
-          directory: dir,
-          prevDir: prevDir
+          directory: './' + dir.join('/'),
+          prevDir: './' + _prevDir.join('/')
       }
+      console.log(data)
       socket.send(JSON.stringify(data));
-      setPrevDir(dir)
+      // setPrevDir([...dir])
     }
   }
 
 
   const navigateToDir = (dirName) => {
-    setCurrDir(dirName)
-    changeDir(dirName)
+    // setCurrDir(dirName)
+    let newDirStack = [
+      ...dirs,
+      dirName
+    ]
+    const tmp = [...dirs]
+
+    
+
+    console.log(dirs, newDirStack, tmp, dirs === tmp)
+    setPrevDir(tmp)
+    setDirs(newDirStack)
+    changeDir(newDirStack, tmp)
+  }
+
+  const goBack = () => {
+    let dirStack = [...dirs]
+    dirStack.pop()
+    const tmp = [...dirs]
+    setPrevDir(tmp)
+    setDirs(dirStack)
+    changeDir(dirStack, tmp)
+  }
+
+  const deleteFile = async (fileName) => {
+    const fileDirToDelete = `./${dirs.join('/')}/${fileName}`
+
+    let res = await fetch('http://localhost:8080/cloud_files/delete/' + encodeURIComponent(fileDirToDelete), {
+      method: "DELETE"
+    })
+
+    console.log(res, fileDirToDelete)
   }
 
   
   return (
     <div className="App">
+      <button onClick={goBack}>Back</button>
       
       <table>
         <thead>
@@ -77,16 +109,16 @@ function App() {
               
               <td>{file.file_size}</td>
               <td>{file.file_created_at}</td>
-              <td><button onClick={() => changeDir(currDir)}>delete</button></td>
+              <td><button onClick={() => deleteFile(file.file_name)}>delete</button></td>
             </tr>)
           }
         </tbody>
       </table>
 
-      <input type="text" placeholder="cd ..." onChange={currDirOnChange}/>
-      <h5>{currDir}</h5>
+      {/* <input type="text" placeholder="cd ..." onChange={currDirOnChange}/> */}
+      {/* <h5>{currDir}</h5>
       <button onClick={() => changeDir(currDir)}>cd ...</button>
-      <button onClick={changeDir}>Add file</button>
+      <button onClick={changeDir}>Add file</button> */}
     </div>
   );
 }
