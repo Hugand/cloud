@@ -33,6 +33,12 @@ public class CloudDirectoryController {
 	    return fileList;
     }
 
+    public boolean deleteFile(String pathDir) {
+        File file = new File(CloudProperties.dir + pathDir);
+
+        return file.delete();
+    }
+
     private String getFileType(File file) {
         return file.isDirectory() ? "folder" : "file";
     }
