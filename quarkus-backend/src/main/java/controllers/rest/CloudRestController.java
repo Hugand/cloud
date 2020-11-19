@@ -48,7 +48,7 @@ public class CloudRestController {
     private CloudDirectoryController cloudDirectoryController = new CloudDirectoryController();
     
     @POST
-    @Path("/upload/{pathToDir}")
+    @Path("/upload")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     public String uploadFile(@MultipartForm MultipartFormDataInput upload) {
         String fileName = "";

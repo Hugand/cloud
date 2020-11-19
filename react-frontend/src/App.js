@@ -12,6 +12,8 @@ function App() {
   const [ dirs, setDirs ] = useState([])
   const [ prevDir, setPrevDir ] = useState([])
 
+  const [ newFile, setNewFile ] = useState()
+
   useEffect(() => {
     if (!isConnected) {
       console.log("Connecting...")
@@ -34,10 +36,6 @@ function App() {
     }
   }, [])
 
-  // const currDirOnChange = (e) => {
-  //   setCurrDir(e.target.value)
-  // }
-
   const changeDir = (dir, _prevDir) => {
     if (isConnected) {
       const data = {
@@ -51,7 +49,6 @@ function App() {
     }
   }
 
-
   const navigateToDir = (dirName) => {
     // setCurrDir(dirName)
     let newDirStack = [
@@ -60,9 +57,6 @@ function App() {
     ]
     const tmp = [...dirs]
 
-    
-
-    console.log(dirs, newDirStack, tmp, dirs === tmp)
     setPrevDir(tmp)
     setDirs(newDirStack)
     changeDir(newDirStack, tmp)
@@ -85,6 +79,34 @@ function App() {
     })
 
     console.log(res, fileDirToDelete)
+  }
+
+
+
+  // function handleTascaFieldOnChange(fieldName, e){
+  //   if(e.target.validity.valid)
+  //       setTasca({
+  //           ...tasca,
+  //           [fieldName]: (fieldName === 'image' && e === null) ? null : e.target.value
+  //       })
+  // }
+
+  async function submitNewFile(e){
+      e.preventDefault()
+
+      let reqBody = new FormData()
+      reqBody.append("file", newFile)
+      reqBody.append("dir", './' + dirs.join('/'))
+
+      fetch('http://localhost:8080/cloud_files/upload', {
+        method: "POST",
+        body: reqBody
+      })
+
+      // reqBody.append("newFileT", tasca.image.type)
+
+      // ServerRequest.createTasca(reqBody)
+      //     .then(() => props.hideModal(false))
   }
 
   
@@ -115,15 +137,14 @@ function App() {
         </tbody>
       </table>
 
+      <input type="file" onChange={e => {setNewFile(e.target.files[0]); console.log(e.target.files[0])}}/>
+      <button onClick={submitNewFile}>Add file</button> 
+
       {/* <input type="text" placeholder="cd ..." onChange={currDirOnChange}/> */}
       {/* <h5>{currDir}</h5>
-      <button onClick={() => changeDir(currDir)}>cd ...</button>
-      <button onClick={changeDir}>Add file</button> */}
+      <button onClick={() => changeDir(currDir)}>cd ...</button>*/}
     </div>
   );
 }
-
-
-
 
 export default App;
