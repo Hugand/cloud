@@ -53,6 +53,7 @@ public class CloudWebSocket {
                 sessionsBuff.remove(session); 
                 break;
             case "cd":
+                System.out.println(clientData);
                 this.changeDirectory(session, clientData);
                 break;
         }
