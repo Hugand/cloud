@@ -1,0 +1,27 @@
+@import '../colors.scss';
+@import '../variables.scss';
+
+.action-block {
+    width: fit-content;
+    padding: 2rem 1.675rem;
+    border: 0;
+    border-radius: $border-radius-big;
+    background-color: $primary-blue;
+    color: white;
+    filter: drop-shadow($box-shadow);
+    font-size: 1.5rem;
+    font-weight: bold;
+    transition: .2s;
+    display: flex;
+    flex-direction: row;
+
+    label {
+        margin-left: 1rem;
+    }
+
+    &:hover,
+    & > *:hover {
+        cursor: pointer;
+        filter: drop-shadow($box-shadow-hover);
+    }
+}

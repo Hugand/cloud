@@ -1,0 +1,14 @@
+@import '../colors.scss';
+@import '../variables.scss';
+
+.dark-text {
+    color: $dark-font;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.light-text {
+    color: $light-font-2;
+    font-size: 1rem;
+    font-weight: 600;
+}

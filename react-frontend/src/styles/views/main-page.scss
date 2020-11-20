@@ -1,0 +1,69 @@
+@import "../colors.scss";
+
+.App {
+    display: grid;
+    grid-template-columns: 80% 20%;
+    grid-template-rows: 60px auto;
+    background-color: $bg-blue;
+    width: 100vw;
+    height: 100vh;
+
+    .top-bar {
+        grid-row: 1;
+        grid-column: 1 / span 2;
+        background-color: $primary-blue;
+        
+        div {
+            height: 100%;
+            display: flex;
+            flex-direction: row;
+            width: fit-content;
+            margin: auto;
+
+            img { margin-right: 0.625rem; }
+
+            h2 {
+                color: white;
+                margin: auto 0;
+            }
+        }
+    }
+
+    .main-content {
+        grid-column: 1;
+        grid-row: 2;
+        display: flex;
+        flex-direction: column;
+        padding: 1.5rem 5.375rem;
+        width: calc(100% - 10.75rem);
+        height: calc(100% - 3rem);
+
+        .search-bar-container {
+            margin-bottom: 1.875rem;
+        }
+
+        .actions {
+            display: flex;
+            flex-direction: row;
+            margin-bottom: 3rem;
+
+            .action-block {
+                margin: 0 1.59rem;
+
+                &:first-child{
+                    margin-left: 0;
+                }
+
+                &:last-child{
+                    margin-right: 0;
+                }
+            }
+        }
+
+    }
+
+    .sidebar {
+        grid-column: 2;
+        grid-row: 2;
+    }
+}
