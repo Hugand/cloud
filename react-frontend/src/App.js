@@ -1,6 +1,10 @@
 import logo from './logo.svg';
-import './App.css';
+import './styles/views/main-page.scss';
 import { useEffect, useState } from 'react'
+import Table from './components/blocks/Table'
+import SideBar from './components/blocks/SideBar'
+import ActionBlock from './components/atoms/ActionBlock'
+import SearchBar from './components/atoms/SearchBar'
 
 function App() {
 
@@ -36,7 +40,7 @@ function App() {
     }
   }, [])
 
-  const changeDir = (dir, _prevDir) => {
+  function changeDir(dir, _prevDir) {
     if (isConnected) {
       const data = {
           type: "cd",
@@ -49,7 +53,7 @@ function App() {
     }
   }
 
-  const navigateToDir = (dirName) => {
+  function navigateToDir(dirName) {
     // setCurrDir(dirName)
     let newDirStack = [
       ...dirs,
@@ -62,7 +66,7 @@ function App() {
     changeDir(newDirStack, tmp)
   }
 
-  const goBack = () => {
+  function goBack() {
     let dirStack = [...dirs]
     dirStack.pop()
     const tmp = [...dirs]
@@ -81,16 +85,6 @@ function App() {
     console.log(res, fileDirToDelete)
   }
 
-
-
-  // function handleTascaFieldOnChange(fieldName, e){
-  //   if(e.target.validity.valid)
-  //       setTasca({
-  //           ...tasca,
-  //           [fieldName]: (fieldName === 'image' && e === null) ? null : e.target.value
-  //       })
-  // }
-
   async function submitNewFile(e){
       e.preventDefault()
 
@@ -102,43 +96,41 @@ function App() {
         method: "POST",
         body: reqBody
       })
-
-      // reqBody.append("newFileT", tasca.image.type)
-
-      // ServerRequest.createTasca(reqBody)
-      //     .then(() => props.hideModal(false))
   }
 
   
   return (
     <div className="App">
-      <button onClick={goBack}>Back</button>
-      
-      <table>
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Size</th>
-            <th>Created at</th>
-          </tr>
-        </thead>
-        <tbody>
-          {
-            data.map(file => <tr>
-              { file.type === "file" 
-                ? <td>{file.file_name}</td>
-                : <td style={{color: "blue"}} onClick={() => navigateToDir(file.file_name)}>{file.file_name}</td>}
-              
-              <td>{file.file_size}</td>
-              <td>{file.file_created_at}</td>
-              <td><button onClick={() => deleteFile(file.file_name)}>delete</button></td>
-            </tr>)
-          }
-        </tbody>
-      </table>
+      <section className="top-bar">
+        <div>
+          <img src="./assets/icons/cloud_icon.svg" alt="cloud_icon" />
+          <h2>MyCloud</h2>
+        </div>
+      </section>
 
+      <section className="main-content">
+        <SearchBar />
+
+        <div className="actions">
+          <ActionBlock label="Add file" icon="./assets/icons/add_icon.svg" />
+          <ActionBlock label="Create folder" icon="./assets/icons/add_icon.svg" />
+        </div>
+
+        <Table
+          data={data}
+          navigateToDir={navigateToDir}
+          goBack={goBack}
+          deleteFile={deleteFile}
+          currDir={dirs} />
+      </section>
+
+      <SideBar/>
+
+      
+      
+{/* 
       <input type="file" onChange={e => {setNewFile(e.target.files[0]); console.log(e.target.files[0])}}/>
-      <button onClick={submitNewFile}>Add file</button> 
+      <button onClick={submitNewFile}>Add file</button>  */}
 
       {/* <input type="text" placeholder="cd ..." onChange={currDirOnChange}/> */}
       {/* <h5>{currDir}</h5>

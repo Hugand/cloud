@@ -1,0 +1,30 @@
+@import '../colors.scss';
+@import '../variables.scss';
+
+.search-bar-container {
+    background-color: white;
+    box-shadow: $box-shadow;
+    border: 0;
+    border-radius: $border-radius-small;
+    padding: 0.625rem 0.875rem;
+    display: flex;
+    flex-direction: row;
+
+    .search-icon {
+        margin-right: 1rem;
+    }
+
+    input {
+        border: 0;
+        font-size: 1.125rem;
+        color: $dark-font;
+        font-weight: 400;
+        width: 100%;
+        outline: none;
+
+        &::placeholder {
+            color: $light-font;
+        }
+    }
+
+}
