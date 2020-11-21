@@ -76,7 +76,7 @@ function App() {
   }
 
   const deleteFile = async (fileName) => {
-    const fileDirToDelete = `./${dirs.join('/')}/${fileName}`
+    const fileDirToDelete = `.${dirs.join('/')}/${fileName}`
 
     let res = await fetch('http://localhost:8080/cloud_files/delete/' + encodeURIComponent(fileDirToDelete), {
       method: "DELETE"

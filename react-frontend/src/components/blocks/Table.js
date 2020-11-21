@@ -36,7 +36,7 @@ function Table(props) {
                         
                         <td className="light-text">{(new Date(file.file_created_at)).toDateString().split(" ").slice(1).join(" ")}</td>
                         <td className="light-text">{file.file_size}</td>
-                        <td><button className="more-btn">
+                        <td><button className="more-btn" onClick={() => props.deleteFile(file.file_name)}>
                                 <img src="./assets/icons/three_dot_icon.svg" alt="" />
                             </button></td>
                     </tr>)
