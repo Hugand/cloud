@@ -94,8 +94,8 @@ public class CloudRestController {
 
     @DELETE
     @Path("/delete/{pathDirToDelete}")
-
     public Map<String, String> deleteFile(@PathParam String pathDirToDelete) {
+        System.out.println(pathDirToDelete);
         Map<String, String> returnData = new HashMap<>();
         try {
             cloudDirectoryController.deleteFile(pathDirToDelete);

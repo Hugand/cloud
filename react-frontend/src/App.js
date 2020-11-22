@@ -5,26 +5,23 @@ import Table from './components/blocks/Table'
 import SideBar from './components/blocks/SideBar'
 import ActionBlock from './components/atoms/ActionBlock'
 import SearchBar from './components/atoms/SearchBar'
+import API from './helpers/Api';
 
 function App() {
 
   const [ data, setData ] = useState([])
   const [ isConnected, setIsConnected ] = useState(false)
   const [ socket, setSocket ] = useState()
-  // const [ currDir, setCurrDir ] = useState("")
 
   const [ dirs, setDirs ] = useState([])
-  const [ prevDir, setPrevDir ] = useState([])
-
   const [ newFile, setNewFile ] = useState()
 
   useEffect(() => {
+    console.log(process.env)
     if (!isConnected) {
-      console.log("Connecting...")
       const socket = new WebSocket("ws://localhost:8080/cloud_websocket")
 
       socket.onopen = () => {
-        console.log("Connected to the web socket");
         socket.send(JSON.stringify({
             type: "initialConn",
         }));
@@ -32,70 +29,44 @@ function App() {
       };
 
       socket.onmessage = m => {
-        // console.log(JSON.parse(m.data));
         setData(JSON.parse(m.data))
       };
-
       setSocket(socket)
     }
   }, [])
 
-  function changeDir(dir, _prevDir) {
-    if (isConnected) {
-      const data = {
-          type: "cd",
-          directory: './' + dir.join('/'),
-          prevDir: './' + _prevDir.join('/')
-      }
-      console.log(data)
-      socket.send(JSON.stringify(data));
-      // setPrevDir([...dir])
-    }
-  }
-
   function navigateToDir(dirName) {
-    // setCurrDir(dirName)
     let newDirStack = [
       ...dirs,
       dirName
     ]
     const tmp = [...dirs]
-
-    setPrevDir(tmp)
     setDirs(newDirStack)
-    changeDir(newDirStack, tmp)
+    API.changeDir(socket, isConnected, newDirStack, tmp)
   }
 
   function goBack() {
     let dirStack = [...dirs]
-    dirStack.pop()
     const tmp = [...dirs]
-    setPrevDir(tmp)
+
+    dirStack.pop()
     setDirs(dirStack)
-    changeDir(dirStack, tmp)
+    API.changeDir(socket, isConnected, dirStack, tmp)
   }
 
   const deleteFile = async (fileName) => {
-    const fileDirToDelete = `.${dirs.join('/')}/${fileName}`
-
-    let res = await fetch('http://localhost:8080/cloud_files/delete/' + encodeURIComponent(fileDirToDelete), {
-      method: "DELETE"
-    })
-
-    console.log(res, fileDirToDelete)
+    const fileDirToDelete = `${dirs.join('/')}/${fileName}`
+    let res = await API.deleteFile(fileDirToDelete)
   }
 
-  async function submitNewFile(e){
+  function submitNewFile(e){
       e.preventDefault()
 
       let reqBody = new FormData()
       reqBody.append("file", newFile)
       reqBody.append("dir", './' + dirs.join('/'))
 
-      fetch('http://localhost:8080/cloud_files/upload', {
-        method: "POST",
-        body: reqBody
-      })
+      API.submitNewFile(reqBody)
   }
 
   

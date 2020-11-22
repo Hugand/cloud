@@ -19,6 +19,12 @@
         margin-left: 1rem;
     }
 
+    img {
+        width: 32px;
+        height: 32px;
+        margin: auto 0;
+    }
+
     &:hover,
     & > *:hover {
         cursor: pointer;
