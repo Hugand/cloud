@@ -9,8 +9,7 @@ import javax.ws.rs.core.MultivaluedMap;
 import org.jboss.resteasy.plugins.providers.multipart.InputPart;
 
 public class FileHelpers {
-    static public String getDirName(Map<String, List<InputPart>>  uploadForm) {
-
+    static public String getDirNameFromMultipartFormData(Map<String, List<InputPart>>  uploadForm) {
         for (InputPart inputPart: uploadForm.get("dir")) {
             try {
                 MultivaluedMap<String, String> header = inputPart.getHeaders();

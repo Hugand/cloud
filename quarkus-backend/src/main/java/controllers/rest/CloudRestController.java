@@ -25,6 +25,8 @@ import org.ugomes.helpers.FileHelpers;
 import org.ugomes.models.MoveForm;
 import org.ugomes.models.RenameForm;
 
+import org.ugomes.models.rest_response.RestResponse;
+
 @Path("/cloud_files")
 @Produces(MediaType.APPLICATION_JSON)
 public class CloudRestController {
@@ -33,29 +35,33 @@ public class CloudRestController {
     @POST
     @Path("/upload")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
-    public String uploadFile(@MultipartForm MultipartFormDataInput upload) {
+    public RestResponse uploadFile(@MultipartForm MultipartFormDataInput upload) {
         String fileName = "";
-
         Map<String, List<InputPart>> uploadForm = upload.getFormDataMap();
         List<InputPart> inputParts = uploadForm.get("file");
-        String dirToUpload = FileHelpers.getDirName(uploadForm);
+        String dirToUpload = FileHelpers.getDirNameFromMultipartFormData(uploadForm);
+        
 
         for (InputPart inputPart : inputParts) {
-         try {
-            MultivaluedMap<String, String> header = inputPart.getHeaders();
-            InputStream inputStream = inputPart.getBody(InputStream.class,null);
-            byte [] bytes = IOUtils.toByteArray(inputStream);
+            try {
+                MultivaluedMap<String, String> header = inputPart.getHeaders();
+                InputStream inputStream = inputPart.getBody(InputStream.class,null);
+                byte [] bytes = IOUtils.toByteArray(inputStream);
+                fileName = CloudProperties.dir + "/" + dirToUpload + "/" + FileHelpers.getFileName(header);
 
-            fileName = CloudProperties.dir + "/" + dirToUpload + "/" + FileHelpers.getFileName(header);
-                
-            FileHelpers.writeFile(bytes,fileName);
-          } catch (IOException e) {
-            e.printStackTrace();
-          }
-
+                if(!dirToUpload.isBlank() && !(new File(fileName)).exists()) {
+                    FileHelpers.writeFile(bytes,fileName);
+                    return new RestResponse(true);
+                } else {
+                    return new RestResponse(false);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+                return new RestResponse(false);
+            }
         }
-        
-        return "done";
+
+        return new RestResponse(false);
     }
 
     @PUT
