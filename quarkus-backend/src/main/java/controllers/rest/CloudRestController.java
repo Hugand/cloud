@@ -65,7 +65,7 @@ public class CloudRestController {
 
     @PUT
     @Path("/rename")
-    public String renameFile(@MultipartForm RenameForm renameFormData) {
+    public RestResponse renameFile(@MultipartForm RenameForm renameFormData) {
         File original = new File(CloudProperties.dir + renameFormData.fileDir);
         File renamed = new File(CloudProperties.dir + renameFormData.newName);
 
@@ -82,7 +82,7 @@ public class CloudRestController {
 
     @PUT
     @Path("/move")
-    public String moveFile(@MultipartForm MoveForm moveFormData) throws IOException {
+    public RestResponse moveFile(@MultipartForm MoveForm moveFormData) throws IOException {
         File original = new File(CloudProperties.dir + moveFormData.currDir + moveFormData.fileName);
         File dest = new File(CloudProperties.dir + moveFormData.newDir + moveFormData.fileName);
 
@@ -99,14 +99,15 @@ public class CloudRestController {
 
     @DELETE
     @Path("/delete/{pathDirToDelete}")
-    public Map<String, String> deleteFile(@PathParam String pathDirToDelete) {
-        Map<String, String> returnData = new HashMap<>();
-        try {
-            cloudDirectoryController.deleteFile(pathDirToDelete);
-            return new RestResponse("success");
-        } catch (Exception e) {
-            return new RestResponse("failed");
-        }
-        return new RestResponse("failed");
+    public RestResponse deleteFile(@PathParam String pathDirToDelete) {
+        if(!pathDirToDelete.isBlank())
+            try {
+                cloudDirectoryController.deleteFile(pathDirToDelete);
+                return new RestResponse("success");
+            } catch (Exception e) {
+                return new RestResponse("failed");
+            }
+        else
+            return new RestResponse("error", "PATH_INVALID");
     }
 }
