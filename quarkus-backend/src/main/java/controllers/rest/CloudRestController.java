@@ -24,7 +24,6 @@ import org.ugomes.controllers.CloudDirectoryController;
 import org.ugomes.helpers.FileHelpers;
 import org.ugomes.models.MoveForm;
 import org.ugomes.models.RenameForm;
-
 import org.ugomes.models.rest_response.RestResponse;
 
 @Path("/cloud_files")
@@ -49,36 +48,36 @@ public class CloudRestController {
                 byte [] bytes = IOUtils.toByteArray(inputStream);
                 fileName = CloudProperties.dir + "/" + dirToUpload + "/" + FileHelpers.getFileName(header);
 
-                if(!dirToUpload.isBlank() && !(new File(fileName)).exists()) {
+                if(!(new File(fileName)).exists()) {
                     FileHelpers.writeFile(bytes,fileName);
-                    return new RestResponse(true);
+                    return new RestResponse("success");
                 } else {
-                    return new RestResponse(false);
+                    return new RestResponse("error", "FILE_ALREADY_EXISTS");
                 }
             } catch (IOException e) {
                 e.printStackTrace();
-                return new RestResponse(false);
+                return new RestResponse("failed");
             }
         }
 
-        return new RestResponse(false);
+        return new RestResponse("failed");
     }
 
     @PUT
     @Path("/rename")
-    public String renameFile(@MultipartForm RenameForm renameFormData) throws IOException {
+    public String renameFile(@MultipartForm RenameForm renameFormData) {
         File original = new File(CloudProperties.dir + renameFormData.fileDir);
         File renamed = new File(CloudProperties.dir + renameFormData.newName);
 
         if (renamed.exists())
-            throw new java.io.IOException("file exists");
+            return new RestResponse("error", "FILE_ALREADY_EXISTS");
 
         boolean success = original.renameTo(renamed);
 
         if (!success) {
-            return "not renamed";
+            return new RestResponse("failed");
         }else
-            return "success";
+            return new RestResponse("success");
     }
 
     @PUT
@@ -88,27 +87,26 @@ public class CloudRestController {
         File dest = new File(CloudProperties.dir + moveFormData.newDir + moveFormData.fileName);
 
         if (dest.exists())
-            throw new java.io.IOException("file exists");
+            return new RestResponse("error", "FILE_ALREADY_EXISTS");
 
         boolean success = original.renameTo(dest);
 
         if (!success) {
-            return "not moved";
+            return new RestResponse("failed");
         }else
-            return "success";
+            return new RestResponse("success");
     }
 
     @DELETE
     @Path("/delete/{pathDirToDelete}")
     public Map<String, String> deleteFile(@PathParam String pathDirToDelete) {
-        System.out.println(pathDirToDelete);
         Map<String, String> returnData = new HashMap<>();
         try {
             cloudDirectoryController.deleteFile(pathDirToDelete);
-            returnData.put("status", "true");
+            return new RestResponse("success");
         } catch (Exception e) {
-            returnData.put("status", "false");
+            return new RestResponse("failed");
         }
-        return returnData;
+        return new RestResponse("failed");
     }
 }
