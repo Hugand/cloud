@@ -29,16 +29,18 @@ function Table(props) {
                 <tbody>
                 {
                     props.data.map(file => 
-                    <tr key={file.file_name}>
+                    <tr key={file.file_name}
+                        onClick={() => file.type !== "file" && props.navigateToDir(file.file_name)}>
                         <td><div className="file-type"></div></td>
-                        <td className="dark-text"
-                            onClick={() => file.type !== "file" && props.navigateToDir(file.file_name)}>{file.file_name}</td>
+                        <td className="dark-text">{file.file_name}</td>
                         
                         <td className="light-text">{(new Date(file.file_created_at)).toDateString().split(" ").slice(1).join(" ")}</td>
                         <td className="light-text">{file.file_size}</td>
-                        <td><button className="more-btn" onClick={() => props.deleteFile(file.file_name)}>
+                        <td>
+                            <button className="more-btn" onClick={() => props.deleteFile(file.file_name)}>
                                 <img src="./assets/icons/three_dot_icon.svg" alt="" />
-                            </button></td>
+                            </button>
+                        </td>
                     </tr>)
                 }
                 </tbody>

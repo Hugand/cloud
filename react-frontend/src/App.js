@@ -1,11 +1,12 @@
-import logo from './logo.svg';
-import './styles/views/main-page.scss';
 import { useEffect, useState } from 'react'
-import Table from './components/blocks/Table'
-import SideBar from './components/blocks/SideBar'
 import ActionBlock from './components/atoms/ActionBlock'
 import SearchBar from './components/atoms/SearchBar'
+import Table from './components/blocks/Table'
+import SideBar from './components/blocks/SideBar'
+import ModalBox from './components/blocks/ModalBox'
+import UploadFileBox from './components/blocks/modal_boxes/UploadFileBox'
 import API from './helpers/Api';
+import './styles/views/main-page.scss';
 
 function App() {
 
@@ -15,6 +16,8 @@ function App() {
 
   const [ dirs, setDirs ] = useState([])
   const [ newFile, setNewFile ] = useState()
+
+  const [ displayUploadFileModal, setDisplayUploadFileModal ] = useState(false)
 
   useEffect(() => {
     console.log(process.env)
@@ -59,15 +62,6 @@ function App() {
     let res = await API.deleteFile(fileDirToDelete)
   }
 
-  function submitNewFile(e){
-      e.preventDefault()
-
-      let reqBody = new FormData()
-      reqBody.append("file", newFile)
-      reqBody.append("dir", './' + dirs.join('/'))
-
-      API.submitNewFile(reqBody)
-  }
 
   
   return (
@@ -83,7 +77,10 @@ function App() {
         <SearchBar />
 
         <div className="actions">
-          <ActionBlock label="Add file" icon="./assets/icons/add_icon.svg" />
+          <ActionBlock
+            label="Add file"
+            icon="./assets/icons/add_icon.svg"
+            clickHandler={() => setDisplayUploadFileModal(true)}/>
           <ActionBlock label="Create folder" icon="./assets/icons/add_icon.svg" />
         </div>
 
@@ -97,6 +94,13 @@ function App() {
 
       <SideBar/>
 
+
+      <ModalBox
+        component={<UploadFileBox
+          dirs={dirs}
+          handleModalToggle={setDisplayUploadFileModal} />}
+        isDisplayed={displayUploadFileModal}
+        handleModalToggle={setDisplayUploadFileModal} />
       
       
 {/* 
