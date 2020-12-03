@@ -25,11 +25,12 @@ class API {
 
     }
 
-    static submitFile(reqBody) {
+    static submitNewFile(reqBody) {
         return fetch(`${process.env.REACT_APP_API_URL}/upload`, {
             method: "POST",
             body: reqBody
         })
+        .then(res => res.json())
     }
 
 }
