@@ -61,7 +61,10 @@ function Table(props) {
                         <td>
                             <button className="more-btn" onClick={e => handleRowsMoreOptionsClick(e, i)}>
                                 <img src="./assets/icons/three_dot_icon.svg" alt="" />
-                                { selectedMoreRow === i && <ActionsPopUp /> }
+                                { selectedMoreRow === i &&
+                                    <ActionsPopUp
+                                        file={ file }
+                                        deleteFile={ props.deleteFile }/> }
                             </button>
                         </td>
                     </tr>)
