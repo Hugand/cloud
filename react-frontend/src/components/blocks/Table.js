@@ -1,5 +1,6 @@
-import React from 'react'
+import React, { useState } from 'react'
 import '../../styles/blocks/table.scss'
+import ActionsPopUp from '../atoms/ActionsPopUp'
 
 /*
     @props {array} data
@@ -10,6 +11,27 @@ import '../../styles/blocks/table.scss'
 */
 
 function Table(props) {
+    const [ selectedMoreRow, setSelectedMoreRow ] = useState(-1)
+
+    function formatDate(date) { return (new Date(date)).toDateString().split(" ").slice(1).join(" ")}
+
+    function handleRowsMoreOptionsClick(e, pos) {
+        if(pos === selectedMoreRow)
+            setSelectedMoreRow(-1)
+        else
+            setSelectedMoreRow(pos)
+
+        e.stopPropagation()
+    }
+
+    function handleNavigateDirClick(file) {
+        if(file.type !== "file") {
+            setSelectedMoreRow(-1)
+            props.navigateToDir(file.file_name)
+        }
+
+    }
+
     return (
         <div className="table-container">
             <div className="table-actions">
@@ -28,17 +50,23 @@ function Table(props) {
                 </thead>
                 <tbody>
                 {
-                    props.data.map(file => 
-                    <tr key={file.file_name}>
+                    props.data && props.data.map((file, i) => 
+                    <tr key={file.file_name}
+                        onClick={() => handleNavigateDirClick(file)}>
                         <td><div className="file-type"></div></td>
-                        <td className="dark-text"
-                            onClick={() => file.type !== "file" && props.navigateToDir(file.file_name)}>{file.file_name}</td>
+                        <td className="dark-text">{ file.file_name }</td>
                         
-                        <td className="light-text">{(new Date(file.file_created_at)).toDateString().split(" ").slice(1).join(" ")}</td>
-                        <td className="light-text">{file.file_size}</td>
-                        <td><button className="more-btn">
+                        <td className="light-text">{ formatDate(file.file_created_at) }</td>
+                        <td className="light-text">{ file.file_size }</td>
+                        <td>
+                            <button className="more-btn" onClick={e => handleRowsMoreOptionsClick(e, i)}>
                                 <img src="./assets/icons/three_dot_icon.svg" alt="" />
-                            </button></td>
+                                { selectedMoreRow === i &&
+                                    <ActionsPopUp
+                                        file={ file }
+                                        deleteFile={ props.deleteFile }/> }
+                            </button>
+                        </td>
                     </tr>)
                 }
                 </tbody>
