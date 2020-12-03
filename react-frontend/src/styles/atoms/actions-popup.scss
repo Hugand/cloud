@@ -1,0 +1,12 @@
+
+.actions-popup-container {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    transform: translateY(-50%);
+    left: 100%;
+    background-color: #dddddd;
+    border-radius: 5px;
+    margin-left: .5rem;
+    padding: .5rem;
+}
