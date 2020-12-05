@@ -2,7 +2,12 @@
 export const initialState = {
     dirs: [],
     socket: null,
-    isConnected: false
+    isConnected: false,
+    toast: {
+        isVisible: false,
+        msg: '',
+        icon: ''
+    },
 }
 
 /*
@@ -25,7 +30,45 @@ export const reducer = (state, action) => {
                 ...state,
                 isConnected: action.value
             }
-
+        case 'changeToast': 
+            return {
+                ...state,
+                toast: action.value
+            }
+        case 'resetToast':
+            return {
+                ...state,
+                toast: {
+                    msg: '',
+                    icon: '',
+                    isVisible: false
+                }
+            }
+        case 'changeToastIsVisible':
+            return {
+                ...state,
+                toast: {
+                    ...state.toast,
+                    isVisible: action.value
+                }
+            }
+        case 'changeToastMsg':
+            return {
+                ...state,
+                toast: {
+                    ...state.toast,
+                    msg: action.value
+                }
+            }
+        case 'changeToastIcon':
+            return {
+                ...state,
+                toast: {
+                    ...state.toast,
+                    icon: action.value
+                }
+            }
+            
         default:
             return state
     }

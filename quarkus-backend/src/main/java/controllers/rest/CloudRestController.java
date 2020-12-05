@@ -68,11 +68,8 @@ public class CloudRestController {
     public RestResponse renameFile(@MultipartForm RenameForm renameFormData) {
         String originalFileDir = CloudProperties.dir + renameFormData.getFileDir() + renameFormData.getPrevName();
         String newFileDir = CloudProperties.dir + renameFormData.getFileDir() + renameFormData.getNewName();
-
         File original = new File(originalFileDir);
         File renamed = new File(newFileDir);
-
-        
 
         if (renamed.exists())
             return new RestResponse("error", "FILE_ALREADY_EXISTS");

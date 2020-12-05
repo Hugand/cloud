@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import API from '../../helpers/Api'
 import useFileOperations from '../../hooks/fileOperationsHook'
+import { useStateValue } from '../../state'
 import '../../styles/atoms/actions-popup.scss'
 
 /*
@@ -12,7 +13,7 @@ function ActionsPopUp(props) {
     const [ isRenameActive, setIsRenameActive ] = useState(false)
     const [ newName, setNewName ] = useState("")
 
-    function handleDeleteFile() {
+    async function handleDeleteFile() {
         deleteFile(props.file.file_name)
         props.handlePopupDisplay(-1)
     }

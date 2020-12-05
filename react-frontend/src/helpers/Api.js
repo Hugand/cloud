@@ -4,6 +4,7 @@ class API {
         return await fetch(`${process.env.REACT_APP_API_URL}/delete/${encodeURIComponent(fileDirToDelete)}`, {
             method: "DELETE"
         })
+        .then(res => res.json())
     }
 
     static changeDir(socket, isConnected, dir, prevDir) {
@@ -33,6 +34,7 @@ class API {
             method: "PUT",
             body: reqBody
         })
+        .then(res => res.json())
     }
 
     static submitNewFile(reqBody) {

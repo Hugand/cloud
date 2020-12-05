@@ -9,11 +9,12 @@ import API from './helpers/Api';
 import './styles/views/main-page.scss';
 import { useStateValue } from './state'
 import useFileOperations from './hooks/fileOperationsHook'
+import Toast from './components/atoms/Toast'
 
 function App() {
-
+  // const [ toast, setToast ] = useState(false)
   const [ data, setData ] = useState([])
-  const [ { isConnected, dirs }, dispatch ] = useStateValue()
+  const [ { isConnected, dirs, toast }, dispatch ] = useStateValue()
   const [ displayUploadFileModal, setDisplayUploadFileModal ] = useState(false)
 
   useEffect(() => {
@@ -41,6 +42,12 @@ function App() {
       })
     }
   }, [])
+
+  function resetToast() {
+    dispatch({
+      type: 'resetToast',
+    })
+  }
 
   return (
     <div className="App">
@@ -75,7 +82,9 @@ function App() {
         isDisplayed={displayUploadFileModal}
         handleModalToggle={setDisplayUploadFileModal} />
       
-      
+      <Toast
+        { ...toast }
+        resetToast={resetToast} />
 {/* 
       <input type="file" onChange={e => {setNewFile(e.target.files[0]); console.log(e.target.files[0])}}/>
       <button onClick={submitNewFile}>Add file</button>  */}
