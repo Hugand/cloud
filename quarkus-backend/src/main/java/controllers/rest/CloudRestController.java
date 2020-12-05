@@ -66,8 +66,10 @@ public class CloudRestController {
     @PUT
     @Path("/rename")
     public RestResponse renameFile(@MultipartForm RenameForm renameFormData) {
-        File original = new File(CloudProperties.dir + renameFormData.fileDir);
-        File renamed = new File(CloudProperties.dir + renameFormData.newName);
+        String originalFileDir = CloudProperties.dir + renameFormData.getFileDir() + renameFormData.getPrevName();
+        String newFileDir = CloudProperties.dir + renameFormData.getFileDir() + renameFormData.getNewName();
+        File original = new File(originalFileDir);
+        File renamed = new File(newFileDir);
 
         if (renamed.exists())
             return new RestResponse("error", "FILE_ALREADY_EXISTS");
@@ -85,6 +87,9 @@ public class CloudRestController {
     public RestResponse moveFile(@MultipartForm MoveForm moveFormData) throws IOException {
         File original = new File(CloudProperties.dir + moveFormData.currDir + moveFormData.fileName);
         File dest = new File(CloudProperties.dir + moveFormData.newDir + moveFormData.fileName);
+
+        if(!original.exists())
+            return new RestResponse("error", "FILE_DOESNT_EXIST");
 
         if (dest.exists())
             return new RestResponse("error", "FILE_ALREADY_EXISTS");

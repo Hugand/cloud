@@ -46,7 +46,7 @@ function SideBar(props) {
                         <h2 className="file-name">File name</h2>
                         <label className="file-size light-text">8KB</label>
                     </div>
-                    <p class="file-last-mod">Last modified Sep 3, 2019</p>
+                    <p className="file-last-mod">Last modified Sep 3, 2019</p>
                 </header>
                 <div className="action-buttons">
                     <button className="action-btn">

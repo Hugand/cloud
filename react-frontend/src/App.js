@@ -7,16 +7,14 @@ import ModalBox from './components/blocks/ModalBox'
 import UploadFileBox from './components/blocks/modal_boxes/UploadFileBox'
 import API from './helpers/Api';
 import './styles/views/main-page.scss';
+import { useStateValue } from './state'
+import useFileOperations from './hooks/fileOperationsHook'
+import Toast from './components/atoms/Toast'
 
 function App() {
-
+  // const [ toast, setToast ] = useState(false)
   const [ data, setData ] = useState([])
-  const [ isConnected, setIsConnected ] = useState(false)
-  const [ socket, setSocket ] = useState()
-
-  const [ dirs, setDirs ] = useState([])
-  const [ newFile, setNewFile ] = useState()
-
+  const [ { isConnected, dirs, toast }, dispatch ] = useStateValue()
   const [ displayUploadFileModal, setDisplayUploadFileModal ] = useState(false)
 
   useEffect(() => {
@@ -28,42 +26,29 @@ function App() {
         socket.send(JSON.stringify({
             type: "initialConn",
         }));
-        setIsConnected(true)
+        dispatch({
+          type: 'changeIsConnected',
+          value: true
+        })
       };
 
       socket.onmessage = m => {
         setData(JSON.parse(m.data))
       };
-      setSocket(socket)
+
+      dispatch({
+        type: 'changeSocket',
+        value: socket
+      })
     }
   }, [])
 
-  function navigateToDir(dirName) {
-    let newDirStack = [
-      ...dirs,
-      dirName
-    ]
-    const tmp = [...dirs]
-    setDirs(newDirStack)
-    API.changeDir(socket, isConnected, newDirStack, tmp)
+  function resetToast() {
+    dispatch({
+      type: 'resetToast',
+    })
   }
 
-  function goBack() {
-    let dirStack = [...dirs]
-    const tmp = [...dirs]
-
-    dirStack.pop()
-    setDirs(dirStack)
-    API.changeDir(socket, isConnected, dirStack, tmp)
-  }
-
-  const deleteFile = async (fileName) => {
-    const fileDirToDelete = `${dirs.join('/')}/${fileName}`
-    let res = await API.deleteFile(fileDirToDelete)
-  }
-
-
-  
   return (
     <div className="App">
       <section className="top-bar">
@@ -73,6 +58,8 @@ function App() {
         </div>
       </section>
 
+      <SideBar/>
+      
       <section className="main-content">
         <SearchBar />
 
@@ -85,15 +72,8 @@ function App() {
         </div>
 
         <Table
-          data={data}
-          navigateToDir={navigateToDir}
-          goBack={goBack}
-          deleteFile={deleteFile}
-          currDir={dirs} />
+          data={data} />
       </section>
-
-      <SideBar/>
-
 
       <ModalBox
         component={<UploadFileBox
@@ -102,7 +82,9 @@ function App() {
         isDisplayed={displayUploadFileModal}
         handleModalToggle={setDisplayUploadFileModal} />
       
-      
+      <Toast
+        { ...toast }
+        resetToast={resetToast} />
 {/* 
       <input type="file" onChange={e => {setNewFile(e.target.files[0]); console.log(e.target.files[0])}}/>
       <button onClick={submitNewFile}>Add file</button>  */}

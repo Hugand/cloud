@@ -1,0 +1,24 @@
+@import '../colors.scss';
+@import '../variables.scss';
+@import '../components.scss';
+
+.toast-container {
+    position: absolute;
+    bottom: 1rem;
+    padding: 1rem;
+    display: flex;
+    flex-direction: row;
+    background-color: $primary-blue;
+    filter: drop-shadow($box-shadow-strong);
+    border-radius: $border-radius-big;
+    transition: .4s ease-in-out;
+
+    .toast-msg {
+        color: white;
+        margin: auto 0;
+    }
+
+    .toast-icon {
+        margin-right: 1rem;
+    }
+}
