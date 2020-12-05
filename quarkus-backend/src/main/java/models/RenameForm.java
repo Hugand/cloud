@@ -4,7 +4,7 @@ import java.io.InputStream;
 
 import javax.ws.rs.FormParam;
 import javax.ws.rs.core.MediaType;
-import java.io.File;  // Import the File class
+import java.io.File; // Import the File class
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.io.UnsupportedEncodingException;
@@ -23,9 +23,7 @@ public class RenameForm {
         return fileDir + " " + prevName + " " + newName;
     }
 
-    
-
-    public String getDecodedFileDir() {
+    public String getFileDir() {
         try {
             return URLDecoder.decode(this.fileDir, StandardCharsets.UTF_8.toString());
         }catch(UnsupportedEncodingException e) {
@@ -35,7 +33,7 @@ public class RenameForm {
         return "";
     }
 
-    public String getDecodedPrevName() {
+    public String getPrevName() {
         try {
             return URLDecoder.decode(this.prevName, StandardCharsets.UTF_8.toString());
         }catch(UnsupportedEncodingException e) {
@@ -45,9 +43,14 @@ public class RenameForm {
         return "";
     }
 
-    public String getDecodedNewName() {
+    public String getNewName() {
         try {
-            return URLDecoder.decode(this.newName, StandardCharsets.UTF_8.toString());
+            String decodedNewName = URLDecoder.decode(this.newName, StandardCharsets.UTF_8.toString());
+
+            if(decodedNewName.split("[.]").length <= 1 && this.getPrevName().split("[.]").length > 1)
+                return decodedNewName + "." + this.getPrevName().split("[.]")[1]; // filename + . + file_extension
+            else
+                return decodedNewName;
         }catch(UnsupportedEncodingException e) {
             System.err.println(e);
         }

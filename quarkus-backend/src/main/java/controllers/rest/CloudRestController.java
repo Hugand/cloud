@@ -66,14 +66,12 @@ public class CloudRestController {
     @PUT
     @Path("/rename")
     public RestResponse renameFile(@MultipartForm RenameForm renameFormData) {
-        File original = new File(CloudProperties.dir + renameFormData.getDecodedFileDir() + renameFormData.getDecodedPrevName());
-        File renamed = new File(CloudProperties.dir + renameFormData.getDecodedFileDir() + renameFormData.getDecodedNewName());
+        String originalFileDir = CloudProperties.dir + renameFormData.getFileDir() + renameFormData.getPrevName();
+        String newFileDir = CloudProperties.dir + renameFormData.getFileDir() + renameFormData.getNewName();
 
-        System.out.println(renameFormData.getAsString());
-        System.out.println(CloudProperties.dir + renameFormData.getDecodedFileDir() + renameFormData.getDecodedPrevName());
-        System.out.println(CloudProperties.dir + renameFormData.getDecodedFileDir() + renameFormData.getDecodedNewName());
-        System.out.println(original);
-        System.out.println(renamed);
+        File original = new File(originalFileDir);
+        File renamed = new File(newFileDir);
+
         
 
         if (renamed.exists())

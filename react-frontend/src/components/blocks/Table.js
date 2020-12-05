@@ -58,13 +58,13 @@ function Table(props) {
                         <td className="light-text">{ formatDate(file.file_created_at) }</td>
                         <td className="light-text">{ file.file_size }</td>
                         <td>
-                            <button className="more-btn" onClick={e => handleRowsMoreOptionsClick(e, i)}>
+                            <span className="more-btn" onClick={e => handleRowsMoreOptionsClick(e, i)}>
                                 <img src="./assets/icons/three_dot_icon.svg" alt="" />
 
                                 { selectedMoreRow === i &&
                                     <ActionsPopUp
                                         file={ file }/> }
-                            </button>
+                            </span>
                         </td>
                     </tr>)
                 }
