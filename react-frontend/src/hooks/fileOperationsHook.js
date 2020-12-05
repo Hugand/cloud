@@ -32,56 +32,70 @@ function useFileOperations() {
     const deleteFile = async (fileName) => {
         const fileDirToDelete = `${dirs.join('/')}/${fileName}`
         let res = await API.deleteFile(fileDirToDelete)
-        console.log(res)
+        const toastData = {
+            isVisible: true,
+            icon: 'error_icon.svg',
+            msg: ''
+        }
+
         switch(res.status) {
             case 'success':
-                dispatch({
-                    type: 'changeToast',
-                    value:{
-                        icon: 'success_icon.svg',
-                        isVisible: true,
-                        msg: 'Success: File deleted!'
-                    }
-                })
+                toastData.icon = 'success_icon.svg'
+                toastData.msg = 'Success: File renamed!'
                 break;
             case 'error':
                 if(res.desc === 'PATH_INVALID'){
-                    dispatch({
-                        type: 'changeToast',
-                        value:{
-                            icon: 'error_icon.svg',
-                            isVisible: true,
-                            msg: `Error: The given path is invalid (${fileDirToDelete}`
-                        }
-                    })
+                    toastData.msg = `Error: The given path is invalid (${fileDirToDelete}`
                 } else {
-                    dispatch({
-                        type: 'changeToast',
-                        value:{
-                            icon: 'error_icon.svg',
-                            isVisible: true,
-                            msg: `Error: Error deleting file (${fileDirToDelete}`
-                        }
-                    })
+                    toastData.msg = `Error: Error deleting file (${fileDirToDelete}`
                 }
                 break;
             case 'failed':
             default:
-                dispatch({
-                    type: 'changeToast',
-                    value:{
-                        icon: 'error_icon.svg',
-                        isVisible: true,
-                        msg: `Error: Error deleting file (${fileDirToDelete}`
-                    }
-                })
+                toastData.msg = `Error: Error deleting file (${fileDirToDelete}`
         }
-        console.log(res)
+
+        dispatch({
+            type: 'changeToast',
+            value: toastData
+        })
     }
 
-    const renameFile = (prevName, newName) => {
+    const renameFile = async (prevName, newName) => {
         const fileDir = `${dirs.join('/')}/`
-        const res = API.renameFile(fileDir, prevName, newName)
+        const res = await API.renameFile(fileDir, prevName, newName)
+        const toastData = {
+            isVisible: true,
+            icon: 'error_icon.svg',
+            msg: ''
+        }
+
+        switch(res.status) {
+            case 'success':
+                toastData.icon = 'success_icon.svg'
+                toastData.msg = 'Success: File renamed!'
+                break;
+            case 'error':
+                switch(res.desc) {
+                    case 'FILE_ALREADY_EXISTS':
+                        toastData.msg = `Error: There's already a file named "${newName}"`
+                        break
+                    case 'FILE_DOESNT_EXIST':
+                        toastData.msg = `Error: The file with the name "${prevName}" doesn't exit`
+                        break
+                    default:
+                        toastData.msg = `Error: Error renaming file (${prevName}`
+                }
+                break;
+            case 'failed':
+            default:
+                toastData.msg = `Error: Error renaming file (${prevName}`
+        }
+            
+        dispatch({
+            type: 'changeToast',
+            value: toastData
+        })
     }
 
     return {

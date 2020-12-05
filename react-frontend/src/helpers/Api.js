@@ -28,21 +28,17 @@ class API {
         reqBody.append("prevName", encodeURIComponent(prevName))
         reqBody.append("newName", encodeURIComponent(newName))
 
-        console.log(reqBody)
-
         return fetch(`${process.env.REACT_APP_API_URL}/rename`, {
             method: "PUT",
             body: reqBody
-        })
-        .then(res => res.json())
+        }).then(res => res.json())
     }
 
     static submitNewFile(reqBody) {
         return fetch(`${process.env.REACT_APP_API_URL}/upload`, {
             method: "POST",
             body: reqBody
-        })
-        .then(res => res.json())
+        }).then(res => res.json())
     }
 
 }

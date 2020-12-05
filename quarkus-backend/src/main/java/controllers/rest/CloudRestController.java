@@ -88,6 +88,9 @@ public class CloudRestController {
         File original = new File(CloudProperties.dir + moveFormData.currDir + moveFormData.fileName);
         File dest = new File(CloudProperties.dir + moveFormData.newDir + moveFormData.fileName);
 
+        if(!original.exists())
+            return new RestResponse("error", "FILE_DOESNT_EXIST");
+
         if (dest.exists())
             return new RestResponse("error", "FILE_ALREADY_EXISTS");
 

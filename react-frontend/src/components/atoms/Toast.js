@@ -15,7 +15,7 @@ function Toast(props) {
             setTimeout(() =>{
                 setWaitingForTimeout(false)
                 props.resetToast()
-            }, 2000)
+            }, 3000)
         }
     }, [props.isVisible])
 
@@ -26,7 +26,7 @@ function Toast(props) {
             }}
             className={"toast-container " }>
             { props.icon !== undefined && props.icon !== null && props.icon !== ""
-             && <img className="toast-icon" src={'./assets/icons/' + props.icon} alt='icon'/>}
+                && <img className="toast-icon" src={'./assets/icons/' + props.icon} alt='icon'/>}
             <p className="toast-msg">{ props.msg }</p>
         </div>
     )
