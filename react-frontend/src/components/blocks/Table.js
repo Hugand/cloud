@@ -63,7 +63,8 @@ function Table(props) {
 
                                 { selectedMoreRow === i &&
                                     <ActionsPopUp
-                                        file={ file }/> }
+                                        file={ file }
+                                        handlePopupDisplay={setSelectedMoreRow} /> }
                             </span>
                         </td>
                     </tr>)

@@ -5,8 +5,7 @@ import '../../styles/atoms/actions-popup.scss'
 
 /*
     @props {File} file
-    @props {Function} deleteFile
-    @props {Function} renameFile
+    @props {Function} handlePopupDisplay
 */
 function ActionsPopUp(props) {
     const { deleteFile, renameFile } = useFileOperations()
@@ -15,10 +14,12 @@ function ActionsPopUp(props) {
 
     function handleDeleteFile() {
         deleteFile(props.file.file_name)
+        props.handlePopupDisplay(-1)
     }
 
     function handleRenameFile() {
         renameFile(props.file.file_name, newName)
+        props.handlePopupDisplay(-1)
     }
 
     return (
