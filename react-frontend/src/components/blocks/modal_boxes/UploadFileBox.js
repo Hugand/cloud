@@ -22,7 +22,7 @@ function UploadFileBox(props) {
 
         let reqBody = new FormData()
         reqBody.append("file", file)
-        reqBody.append("dir", './' + props.dirs.join('/'))
+        reqBody.append("dir", encodeURIComponent('./' + props.dirs.join('/')))
 
         setStatus({
             msg: "Uploading file...",
@@ -38,6 +38,7 @@ function UploadFileBox(props) {
                         props.handleModalToggle(false)
                         break
                     case 'error':
+                    case 'failed':
                     default:
                         throw res
                 }
@@ -55,7 +56,7 @@ function UploadFileBox(props) {
                     case 'PATH_INVALID':
                         newStatus.msg = 'Error: Path invalid!'
                         break
-                    default: newStatus.msg = ''
+                    default: newStatus.msg = 'Error!'
                 }
 
                 setStatus(newStatus)

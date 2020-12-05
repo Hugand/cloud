@@ -28,4 +28,39 @@
             color: #DA3D3D;
         }
     }
+
+    .rename-field-container {
+        display: flex;
+        flex-direction: row;
+        filter: drop-shadow($box-shadow);
+        border: 1px solid #4e9e3f;
+        border-radius: .4rem;
+
+        .rename-field {
+            width: 100px;
+            height: 1rem;
+            font-size: 0.875rem;
+            margin: .5rem;
+        }
+
+        .confirm-btn {
+            background-color: #4e9e3f;
+            width: 2rem;
+            border-top-right-radius: $border-radius-small;
+            border-bottom-right-radius: $border-radius-small;
+            position: relative;
+            
+            &:hover {
+                cursor: pointer;
+            }
+
+            img {
+                display: block;
+                margin: auto;
+                margin-top: .9rem;
+                position: relative;
+            }
+            
+        }
+    }
 }

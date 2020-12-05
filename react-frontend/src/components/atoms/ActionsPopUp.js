@@ -1,22 +1,42 @@
-import React from 'react'
+import React, { useState } from 'react'
 import API from '../../helpers/Api'
+import useFileOperations from '../../hooks/fileOperationsHook'
 import '../../styles/atoms/actions-popup.scss'
 
 /*
     @props {File} file
     @props {Function} deleteFile
+    @props {Function} renameFile
 */
 function ActionsPopUp(props) {
+    const { deleteFile, renameFile } = useFileOperations()
+    const [ isRenameActive, setIsRenameActive ] = useState(false)
+    const [ newName, setNewName ] = useState("")
 
-    function deleteFile() {
-        props.deleteFile(props.file.file_name)
+    function handleDeleteFile() {
+        deleteFile(props.file.file_name)
+    }
+
+    function handleRenameFile() {
+        renameFile(props.file.file_name, newName)
     }
 
     return (
-        <div className="actions-popup-container">
-            <button className="dark-text popup-action-btn">Rename</button>
+        <div className="actions-popup-container" onClick={e => e.stopPropagation()}>
+            {
+                !isRenameActive
+                ? <button className="dark-text popup-action-btn" onClick={() => setIsRenameActive(true)}>Rename</button>
+                : <div className="rename-field-container">
+                    <input type="text" className="rename-field" onChange={e => setNewName(e.target.value)}/>
+                    <button 
+                        className="confirm-btn"
+                        onClick={handleRenameFile}>
+                            <img src="./assets/icons/tick_icon.svg" alt='' /></button>
+                </div>
+            }
+            
             <button className="dark-text popup-action-btn">Move</button>
-            <button className="popup-action-btn delete-btn" onClick={deleteFile}>Delete</button>
+            <button className="popup-action-btn delete-btn" onClick={handleDeleteFile}>Delete</button>
         </div>
     )
 }

@@ -21,8 +21,18 @@ class API {
 
     }
 
-    static async renameFile () {
+    static async renameFile (fileDir, prevName, newName) {
+        const reqBody = new FormData()
+        reqBody.append("fileDir", encodeURIComponent(fileDir))
+        reqBody.append("prevName", encodeURIComponent(prevName))
+        reqBody.append("newName", encodeURIComponent(newName))
 
+        console.log(reqBody)
+
+        return fetch(`${process.env.REACT_APP_API_URL}/rename`, {
+            method: "PUT",
+            body: reqBody
+        })
     }
 
     static submitNewFile(reqBody) {
