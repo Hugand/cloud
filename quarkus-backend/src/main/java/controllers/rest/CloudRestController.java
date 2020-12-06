@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -24,13 +25,30 @@ import org.ugomes.controllers.CloudDirectoryController;
 import org.ugomes.helpers.FileHelpers;
 import org.ugomes.models.MoveForm;
 import org.ugomes.models.RenameForm;
+import org.ugomes.models.rest_response.GetFoldersInDirResponse;
 import org.ugomes.models.rest_response.RestResponse;
+import java.util.Set;
 
 @Path("/cloud_files")
 @Produces(MediaType.APPLICATION_JSON)
 public class CloudRestController {
     private CloudDirectoryController cloudDirectoryController = new CloudDirectoryController();
     
+    @GET
+    @Path("/getFoldersInDir/{dir}")
+    public GetFoldersInDirResponse getFoldersInDir(@PathParam String dir) {
+        CloudDirectoryController cdc =  new CloudDirectoryController();
+
+        try {
+            Set<String> folderList = cdc.getFoldersList(dir);
+
+            return new GetFoldersInDirResponse("success", folderList);
+        } catch(IOException e) {
+            System.err.println(e);
+            return new GetFoldersInDirResponse("error");
+        }
+    }
+
     @POST
     @Path("/upload")
     @Consumes(MediaType.MULTIPART_FORM_DATA)

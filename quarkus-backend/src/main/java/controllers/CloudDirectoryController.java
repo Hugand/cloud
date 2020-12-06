@@ -33,6 +33,21 @@ public class CloudDirectoryController {
 	    return fileList;
     }
 
+    public Set<String> getFoldersList(String dir) throws IOException  {
+        Set<String> folderList = new HashSet<>();
+	    try (DirectoryStream<Path> stream = Files.newDirectoryStream(Paths.get(CloudProperties.dir + dir))) {
+	        for (Path path : stream) {
+                String fileType = this.getFileType(path.toFile());
+                
+                if(fileType == "folder") {
+                    String folderName = path.getFileName().toString();
+                    folderList.add(folderName);
+                }
+	        }
+	    }
+	    return folderList;
+    }
+
     public boolean deleteFile(String pathDir) {
         File file = new File(CloudProperties.dir + pathDir);
 
