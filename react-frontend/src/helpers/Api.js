@@ -41,6 +41,14 @@ class API {
         }).then(res => res.json())
     }
 
+    /*
+        @param {String} dirToList, example: dir1/dir2/dir3
+    */
+    static getFoldersInDir(dirToList) {
+        return fetch(`${process.env.REACT_APP_API_URL}/getFoldersInDir/${encodeURIComponent(dirToList)}`)
+            .then(res => res.json())
+    }
+
 }
 
 export default API

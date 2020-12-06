@@ -98,11 +98,32 @@ function useFileOperations() {
         })
     }
 
+    const getFoldersInDir = async (dirStack) => {
+        const dirToList = dirStack.join('/') + '/'
+        const res = await API.getFoldersInDir(dirToList)
+        switch(res.status) {
+            case 'success':
+                return res.folderList
+            case 'error':
+            default:
+                dispatch({
+                    type: 'changeToast',
+                    value: {
+                        isVisible: true,
+                        icon: 'error_icon.svg',
+                        msg: "Error: Error retrieving folder's list"
+                    }
+                })
+                return null
+        }
+    }
+
     return {
         navigateToDir,
         goBack,
         deleteFile,
-        renameFile
+        renameFile,
+        getFoldersInDir
     }
 }
 

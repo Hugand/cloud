@@ -10,6 +10,7 @@ import './styles/views/main-page.scss';
 import { useStateValue } from './state'
 import useFileOperations from './hooks/fileOperationsHook'
 import Toast from './components/atoms/Toast'
+import MoveFileBox from './components/blocks/modal_boxes/MoveFileBox'
 
 function App() {
   // const [ toast, setToast ] = useState(false)
@@ -75,12 +76,17 @@ function App() {
           data={data} />
       </section>
 
+      {/* TODO: Remove dirs from UploadFileBox component!!!! */}
       <ModalBox
         component={<UploadFileBox
           dirs={dirs}
           handleModalToggle={setDisplayUploadFileModal} />}
         isDisplayed={displayUploadFileModal}
         handleModalToggle={setDisplayUploadFileModal} />
+
+      <ModalBox
+        component={<MoveFileBox />}
+        isDisplayed={true}/>
       
       <Toast
         { ...toast }
