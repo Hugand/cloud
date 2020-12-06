@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -24,13 +25,30 @@ import org.ugomes.controllers.CloudDirectoryController;
 import org.ugomes.helpers.FileHelpers;
 import org.ugomes.models.MoveForm;
 import org.ugomes.models.RenameForm;
+import org.ugomes.models.rest_response.GetFoldersInDirResponse;
 import org.ugomes.models.rest_response.RestResponse;
+import java.util.Set;
 
 @Path("/cloud_files")
 @Produces(MediaType.APPLICATION_JSON)
 public class CloudRestController {
     private CloudDirectoryController cloudDirectoryController = new CloudDirectoryController();
     
+    @GET
+    @Path("/getFoldersInDir/{dir}")
+    public GetFoldersInDirResponse getFoldersInDir(@PathParam String dir) {
+        CloudDirectoryController cdc =  new CloudDirectoryController();
+
+        try {
+            Set<String> folderList = cdc.getFoldersList(dir);
+
+            return new GetFoldersInDirResponse("success", folderList);
+        } catch(IOException e) {
+            System.err.println(e);
+            return new GetFoldersInDirResponse("error");
+        }
+    }
+
     @POST
     @Path("/upload")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
@@ -71,6 +89,9 @@ public class CloudRestController {
         File original = new File(originalFileDir);
         File renamed = new File(newFileDir);
 
+        if(!original.exists())
+            return new RestResponse("error", "FILE_DOESNT_EXIST");
+
         if (renamed.exists())
             return new RestResponse("error", "FILE_ALREADY_EXISTS");
 
@@ -84,9 +105,10 @@ public class CloudRestController {
 
     @PUT
     @Path("/move")
-    public RestResponse moveFile(@MultipartForm MoveForm moveFormData) throws IOException {
-        File original = new File(CloudProperties.dir + moveFormData.currDir + moveFormData.fileName);
-        File dest = new File(CloudProperties.dir + moveFormData.newDir + moveFormData.fileName);
+    public RestResponse moveFile(@MultipartForm MoveForm moveFormData) {
+        moveFormData.print();
+        File original = new File(CloudProperties.dir + moveFormData.getCurrDir() + moveFormData.getFileName());
+        File dest = new File(CloudProperties.dir + moveFormData.getNewDir() + moveFormData.getFileName());
 
         if(!original.exists())
             return new RestResponse("error", "FILE_DOESNT_EXIST");
@@ -94,6 +116,7 @@ public class CloudRestController {
         if (dest.exists())
             return new RestResponse("error", "FILE_ALREADY_EXISTS");
 
+        // Moves the file
         boolean success = original.renameTo(dest);
 
         if (!success) {

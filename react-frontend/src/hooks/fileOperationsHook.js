@@ -41,7 +41,7 @@ function useFileOperations() {
         switch(res.status) {
             case 'success':
                 toastData.icon = 'success_icon.svg'
-                toastData.msg = 'Success: File renamed!'
+                toastData.msg = 'Success: File deleted!'
                 break;
             case 'error':
                 if(res.desc === 'PATH_INVALID'){
@@ -81,7 +81,7 @@ function useFileOperations() {
                         toastData.msg = `Error: There's already a file named "${newName}"`
                         break
                     case 'FILE_DOESNT_EXIST':
-                        toastData.msg = `Error: The file with the name "${prevName}" doesn't exit`
+                        toastData.msg = `Error: The file with the name "${prevName}" doesn't exist`
                         break
                     default:
                         toastData.msg = `Error: Error renaming file (${prevName}`
@@ -98,11 +98,73 @@ function useFileOperations() {
         })
     }
 
+    const moveFile = async (fileName, newDirStack) => {
+        const currDir = `./${dirs.join('/')}/`
+        const newDir = `${newDirStack.join('/')}/`
+        const res = await API.moveFile(fileName, currDir, newDir)
+        const toastData = {
+            isVisible: true,
+            icon: 'error_icon.svg',
+            msg: ''
+        }
+
+        switch(res.status) {
+            case 'success':
+                toastData.icon = 'success_icon.svg'
+                toastData.msg = `Success: File moved to "${newDir + fileName}"!`
+                break;
+            case 'error':
+                switch(res.desc) {
+                    case 'FILE_ALREADY_EXISTS':
+                        toastData.msg = `Error: The file already exists ("${newDir + fileName}")`
+                        break
+                    case 'FILE_DOESNT_EXIST':
+                        toastData.msg = `Error: No file with the name "${currDir + fileName}"`
+                        break
+                    default:
+                        toastData.msg = `Error: Error moving file (${currDir + fileName}`
+                }
+                break;
+            case 'failed':
+            default:
+                toastData.msg = `Error: Error moving file (${currDir + fileName}`
+        }
+
+        dispatch({
+            type: 'changeToast',
+            value: toastData
+        })
+
+        return res.status === 'success'
+    }
+
+    const getFoldersInDir = async (dirStack) => {
+        const dirToList = dirStack.join('/') + '/'
+        const res = await API.getFoldersInDir(dirToList)
+        switch(res.status) {
+            case 'success':
+                return res.folderList
+            case 'error':
+            default:
+                dispatch({
+                    type: 'changeToast',
+                    value: {
+                        isVisible: true,
+                        icon: 'error_icon.svg',
+                        msg: "Error: Error retrieving folder's list"
+                    }
+                })
+                return null
+        }
+    }
+
     return {
         navigateToDir,
         goBack,
         deleteFile,
-        renameFile
+        renameFile,
+        moveFile,
+        getFoldersInDir
     }
 }
 

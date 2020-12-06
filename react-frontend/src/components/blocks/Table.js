@@ -7,26 +7,50 @@ import ActionsPopUp from '../atoms/ActionsPopUp'
 /*
     @props {array} data
 */
-
 function Table(props) {
-    const [ { dirs }, _ ] = useStateValue()
+    const [ { dirs, selectedFileActions }, dispatch ] = useStateValue()
     const { goBack, navigateToDir } = useFileOperations()
-    const [ selectedMoreRow, setSelectedMoreRow ] = useState(-1)
 
     function formatDate(date) { return (new Date(date)).toDateString().split(" ").slice(1).join(" ")}
 
-    function handleRowsMoreOptionsClick(e, pos) {
-        if(pos === selectedMoreRow)
-            setSelectedMoreRow(-1)
-        else
-            setSelectedMoreRow(pos)
+    function areFilesEqual(f1, f2) {
+        let areEqual = true
+        if((f1 !== null && f2 !== null) && Object.keys(f1).length === Object.keys(f2).length) {
+            for(let i = 0; i < Object.keys(f1).length; i++) {
+                if(!(Object.keys(f1)[i] === Object.keys(f2)[i] 
+                    && Object.values(f1)[i] === Object.values(f2)[i])) {
+                        areEqual = false
+                }
+            }
+        } else 
+            areEqual = false
+
+        return areEqual
+    }
+
+    function handleRowsMoreOptionsClick(e, file) {
+        console.log(areFilesEqual(file, selectedFileActions))
+        if(areFilesEqual(file, selectedFileActions)){
+            dispatch({
+                type: 'changeSelectedFileActions',
+                value: null
+            })
+        } else{
+            dispatch({
+                type: 'changeSelectedFileActions',
+                value: file
+            })
+        }
 
         e.stopPropagation()
     }
 
     function handleNavigateDirClick(file) {
         if(file.type !== "file") {
-            setSelectedMoreRow(-1)
+            dispatch({
+                type: 'changeSelectedFileActions',
+                value: null
+            })
             navigateToDir(file.file_name)
         }
     }
@@ -49,7 +73,7 @@ function Table(props) {
                 </thead>
                 <tbody>
                 {
-                    props.data && props.data.map((file, i) => 
+                    props.data && props.data.map(file => 
                     <tr key={file.file_name}
                         onClick={() => handleNavigateDirClick(file)}>
                         <td><div className="file-type"></div></td>
@@ -58,13 +82,12 @@ function Table(props) {
                         <td className="light-text">{ formatDate(file.file_created_at) }</td>
                         <td className="light-text">{ file.file_size }</td>
                         <td>
-                            <span className="more-btn" onClick={e => handleRowsMoreOptionsClick(e, i)}>
+                            <span className="more-btn" onClick={e => handleRowsMoreOptionsClick(e, file)}>
                                 <img src="./assets/icons/three_dot_icon.svg" alt="" />
 
-                                { selectedMoreRow === i &&
+                                { areFilesEqual(selectedFileActions, file) &&
                                     <ActionsPopUp
-                                        file={ file }
-                                        handlePopupDisplay={setSelectedMoreRow} /> }
+                                        handlePopupDisplay={handleRowsMoreOptionsClick} /> }
                             </span>
                         </td>
                     </tr>)

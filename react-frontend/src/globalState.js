@@ -8,6 +8,8 @@ export const initialState = {
         msg: '',
         icon: ''
     },
+    selectedFileActions: null,
+    displayMoveFileModal: false
 }
 
 /*
@@ -44,29 +46,15 @@ export const reducer = (state, action) => {
                     isVisible: false
                 }
             }
-        case 'changeToastIsVisible':
+        case 'changeSelectedFileActions':
             return {
                 ...state,
-                toast: {
-                    ...state.toast,
-                    isVisible: action.value
-                }
+                selectedFileActions: action.value
             }
-        case 'changeToastMsg':
+        case 'changeDisplayMoveFileModal':
             return {
                 ...state,
-                toast: {
-                    ...state.toast,
-                    msg: action.value
-                }
-            }
-        case 'changeToastIcon':
-            return {
-                ...state,
-                toast: {
-                    ...state.toast,
-                    icon: action.value
-                }
+                displayMoveFileModal: action.value
             }
             
         default:

@@ -18,8 +18,16 @@ class API {
         }
     }
 
-    static async moveFile () {
+    static async moveFile (fileName, currDir, newDir) {
+        const reqBody = new FormData()
+        reqBody.append("fileName", encodeURIComponent(fileName))
+        reqBody.append("currDir", encodeURIComponent(currDir))
+        reqBody.append("newDir", encodeURIComponent(newDir))
 
+        return fetch(`${process.env.REACT_APP_API_URL}/move`, {
+            method: "PUT",
+            body: reqBody
+        }).then(res => res.json())
     }
 
     static async renameFile (fileDir, prevName, newName) {
@@ -39,6 +47,14 @@ class API {
             method: "POST",
             body: reqBody
         }).then(res => res.json())
+    }
+
+    /*
+        @param {String} dirToList, example: dir1/dir2/dir3
+    */
+    static getFoldersInDir(dirToList) {
+        return fetch(`${process.env.REACT_APP_API_URL}/getFoldersInDir/${encodeURIComponent(dirToList)}`)
+            .then(res => res.json())
     }
 
 }

@@ -5,22 +5,29 @@ import { useStateValue } from '../../state'
 import '../../styles/atoms/actions-popup.scss'
 
 /*
-    @props {File} file
     @props {Function} handlePopupDisplay
 */
 function ActionsPopUp(props) {
     const { deleteFile, renameFile } = useFileOperations()
     const [ isRenameActive, setIsRenameActive ] = useState(false)
     const [ newName, setNewName ] = useState("")
+    const [ { selectedFileActions }, dispatch ] = useStateValue()
 
-    async function handleDeleteFile() {
-        deleteFile(props.file.file_name)
-        props.handlePopupDisplay(-1)
+    async function handleDeleteFile(e) {
+        deleteFile(selectedFileActions.file_name)
+        props.handlePopupDisplay(e, null)
     }
 
-    function handleRenameFile() {
-        renameFile(props.file.file_name, newName)
-        props.handlePopupDisplay(-1)
+    function handleMoveFileClick() {
+        dispatch({
+            type: 'changeDisplayMoveFileModal',
+            value: true
+        })
+    }
+
+    function handleRenameFile(e) {
+        renameFile(selectedFileActions.file_name, newName)
+        props.handlePopupDisplay(e, null)
     }
 
     return (
@@ -37,7 +44,7 @@ function ActionsPopUp(props) {
                 </div>
             }
             
-            <button className="dark-text popup-action-btn">Move</button>
+            <button className="dark-text popup-action-btn" onClick={handleMoveFileClick}>Move</button>
             <button className="popup-action-btn delete-btn" onClick={handleDeleteFile}>Delete</button>
         </div>
     )
