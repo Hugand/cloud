@@ -15,8 +15,15 @@ import MoveFileBox from './components/blocks/modal_boxes/MoveFileBox'
 function App() {
   // const [ toast, setToast ] = useState(false)
   const [ data, setData ] = useState([])
-  const [ { isConnected, dirs, toast }, dispatch ] = useStateValue()
+  const [ {
+    isConnected,
+    dirs,
+    toast,
+    displayMoveFileModal,
+    selectedFileActions
+  }, dispatch ] = useStateValue()
   const [ displayUploadFileModal, setDisplayUploadFileModal ] = useState(false)
+  // const [ displayMoveFileModal, setDisplayMoveFileModal ] = useState(false)
 
   useEffect(() => {
     console.log(process.env)
@@ -47,6 +54,13 @@ function App() {
   function resetToast() {
     dispatch({
       type: 'resetToast',
+    })
+  }
+
+  function handleMoveFileModal(val) {
+    dispatch({
+      type: 'changeDisplayMoveFileModal',
+      value: val
     })
   }
 
@@ -85,19 +99,16 @@ function App() {
         handleModalToggle={setDisplayUploadFileModal} />
 
       <ModalBox
-        component={<MoveFileBox />}
-        isDisplayed={true}/>
+        component={<MoveFileBox
+          file={selectedFileActions}
+          handleModalToggle={handleMoveFileModal} />}
+        isDisplayed={displayMoveFileModal}
+        handleModalToggle={handleMoveFileModal} />
       
       <Toast
         { ...toast }
         resetToast={resetToast} />
-{/* 
-      <input type="file" onChange={e => {setNewFile(e.target.files[0]); console.log(e.target.files[0])}}/>
-      <button onClick={submitNewFile}>Add file</button>  */}
-
-      {/* <input type="text" placeholder="cd ..." onChange={currDirOnChange}/> */}
-      {/* <h5>{currDir}</h5>
-      <button onClick={() => changeDir(currDir)}>cd ...</button>*/}
+        
     </div>
   );
 }
