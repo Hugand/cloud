@@ -1,20 +1,14 @@
-package org.ugomes.controllers;
+package controllers;
 
 import java.io.File;
-import org.ugomes.configs.CloudProperties;
-import javax.inject.Inject;
+import configs.CloudProperties;
 import java.util.*;
-import java.util.stream.*;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.io.IOException;
 
 public class CloudDirectoryController {
-    public CloudDirectoryController() { 
-    }
-
-    @Inject
-    CloudProperties cloud = new CloudProperties();
+    public CloudDirectoryController() { }
 
     public Set<Map<String, String>> getFilesList(String subDir) throws IOException  {
         Set<Map<String, String>> fileList = new HashSet<>();
@@ -31,6 +25,21 @@ public class CloudDirectoryController {
 	        }
 	    }
 	    return fileList;
+    }
+
+    public Set<String> getFoldersList(String dir) throws IOException  {
+        Set<String> folderList = new HashSet<>();
+	    try (DirectoryStream<Path> stream = Files.newDirectoryStream(Paths.get(CloudProperties.dir + dir))) {
+	        for (Path path : stream) {
+                String fileType = this.getFileType(path.toFile());
+                
+                if(fileType.equals("folder")) {
+                    String folderName = path.getFileName().toString();
+                    folderList.add(folderName);
+                }
+	        }
+	    }
+	    return folderList;
     }
 
     public boolean deleteFile(String pathDir) {

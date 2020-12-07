@@ -1,36 +1,69 @@
-package org.ugomes.controllers.rest;
+package controllers.rest;
 
+import configs.CloudProperties;
+import controllers.CloudDirectoryController;
+import helpers.FileHelpers;
+import models.CreateDirForm;
+import models.MoveForm;
+import models.RenameForm;
+import models.rest_response.GetFoldersInDirResponse;
+import models.rest_response.RestResponse;
+import org.apache.commons.io.IOUtils;
+import org.jboss.resteasy.annotations.jaxrs.PathParam;
+import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
+import org.jboss.resteasy.plugins.providers.multipart.InputPart;
+import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
+import com.google.gson.Gson;
+
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedMap;
-import org.apache.commons.io.IOUtils;
-import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
-import org.jboss.resteasy.annotations.jaxrs.PathParam;
-import org.jboss.resteasy.plugins.providers.multipart.InputPart;
-import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
-import org.ugomes.configs.CloudProperties;
-import org.ugomes.controllers.CloudDirectoryController;
-import org.ugomes.helpers.FileHelpers;
-import org.ugomes.models.MoveForm;
-import org.ugomes.models.RenameForm;
-import org.ugomes.models.rest_response.RestResponse;
+import java.util.Set;
 
 @Path("/cloud_files")
 @Produces(MediaType.APPLICATION_JSON)
 public class CloudRestController {
-    private CloudDirectoryController cloudDirectoryController = new CloudDirectoryController();
-    
+    private final CloudDirectoryController cloudDirectoryController = new CloudDirectoryController();
+    private final Gson gson = new Gson();
+
+    @GET
+    @Path("/getFoldersInDir/{dir}")
+    public GetFoldersInDirResponse getFoldersInDir(@PathParam String dir) {
+        CloudDirectoryController cdc =  new CloudDirectoryController();
+
+        try {
+            Set<String> folderList = cdc.getFoldersList(dir);
+
+            return new GetFoldersInDirResponse("success", folderList);
+        } catch(IOException e) {
+            System.err.println(e);
+            return new GetFoldersInDirResponse("error");
+        }
+    }
+
+    //    @Produces(MediaType.APPLICATION_JSON)
+    @POST
+    @Path("/mkdir")
+    public RestResponse mkdir(String jsonData) {
+        CreateDirForm cdf = gson.fromJson(jsonData, CreateDirForm.class);
+
+        System.out.println(CloudProperties.dir + cdf.getDirPathName());
+
+        File newDir = new File(CloudProperties.dir + cdf.getDirPathName());
+
+        if (newDir.exists())
+            return new RestResponse("error", "FILE_ALREADY_EXISTS");
+
+        boolean isSuccessful = newDir.mkdir();
+
+        return new RestResponse(isSuccessful ? "success" : "failed");
+    }
+
     @POST
     @Path("/upload")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
@@ -49,8 +82,8 @@ public class CloudRestController {
                 fileName = CloudProperties.dir + "/" + dirToUpload + "/" + FileHelpers.getFileName(header);
 
                 if(!(new File(fileName)).exists()) {
-                    FileHelpers.writeFile(bytes,fileName);
-                    return new RestResponse("success");
+                    boolean createFileResult = FileHelpers.writeFile(bytes,fileName);
+                    return new RestResponse(createFileResult ? "success" : "failed");
                 } else {
                     return new RestResponse("error", "FILE_ALREADY_EXISTS");
                 }
@@ -66,8 +99,13 @@ public class CloudRestController {
     @PUT
     @Path("/rename")
     public RestResponse renameFile(@MultipartForm RenameForm renameFormData) {
-        File original = new File(CloudProperties.dir + renameFormData.fileDir);
-        File renamed = new File(CloudProperties.dir + renameFormData.newName);
+        String originalFileDir = CloudProperties.dir + renameFormData.getFileDir() + renameFormData.getPrevName();
+        String newFileDir = CloudProperties.dir + renameFormData.getFileDir() + renameFormData.getNewName();
+        File original = new File(originalFileDir);
+        File renamed = new File(newFileDir);
+
+        if(!original.exists())
+            return new RestResponse("error", "FILE_DOESNT_EXIST");
 
         if (renamed.exists())
             return new RestResponse("error", "FILE_ALREADY_EXISTS");
@@ -82,13 +120,18 @@ public class CloudRestController {
 
     @PUT
     @Path("/move")
-    public RestResponse moveFile(@MultipartForm MoveForm moveFormData) throws IOException {
-        File original = new File(CloudProperties.dir + moveFormData.currDir + moveFormData.fileName);
-        File dest = new File(CloudProperties.dir + moveFormData.newDir + moveFormData.fileName);
+    public RestResponse moveFile(@MultipartForm MoveForm moveFormData) {
+        moveFormData.print();
+        File original = new File(CloudProperties.dir + moveFormData.getCurrDir() + moveFormData.getFileName());
+        File dest = new File(CloudProperties.dir + moveFormData.getNewDir() + moveFormData.getFileName());
+
+        if(!original.exists())
+            return new RestResponse("error", "FILE_DOESNT_EXIST");
 
         if (dest.exists())
             return new RestResponse("error", "FILE_ALREADY_EXISTS");
 
+        // Moves the file
         boolean success = original.renameTo(dest);
 
         if (!success) {
@@ -102,8 +145,8 @@ public class CloudRestController {
     public RestResponse deleteFile(@PathParam String pathDirToDelete) {
         if(!pathDirToDelete.isBlank())
             try {
-                cloudDirectoryController.deleteFile(pathDirToDelete);
-                return new RestResponse("success");
+                boolean isSuccessful = cloudDirectoryController.deleteFile(pathDirToDelete);
+                return new RestResponse(isSuccessful ? "success" : "failed");
             } catch (Exception e) {
                 return new RestResponse("failed");
             }

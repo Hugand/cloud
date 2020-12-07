@@ -1,10 +1,8 @@
-package org.ugomes.controllers.rest;
+package configs;
 
 import javax.ws.rs.container.*;
 import java.io.IOException;
-// import java.security.Provider;
 import javax.ws.rs.ext.*;
-// import org.jboss.resteasy.annotations.providers.Provider;
 
 @Provider
 public class CorsFilter implements ContainerResponseFilter {

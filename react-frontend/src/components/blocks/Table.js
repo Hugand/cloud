@@ -1,42 +1,66 @@
 import React, { useState } from 'react'
+import useFileOperations from '../../hooks/fileOperationsHook'
+import { useStateValue } from '../../state'
 import '../../styles/blocks/table.scss'
 import ActionsPopUp from '../atoms/ActionsPopUp'
 
 /*
     @props {array} data
-    @props {function} goBack
-    @props {function} navigateToDir
-    @props {function} deleteFile
-    @props {array} currDir
+    @props {String} searchText
 */
-
 function Table(props) {
-    const [ selectedMoreRow, setSelectedMoreRow ] = useState(-1)
+    const [ { dirs, selectedFileActions }, dispatch ] = useStateValue()
+    const { goBack, navigateToDir } = useFileOperations()
 
     function formatDate(date) { return (new Date(date)).toDateString().split(" ").slice(1).join(" ")}
 
-    function handleRowsMoreOptionsClick(e, pos) {
-        if(pos === selectedMoreRow)
-            setSelectedMoreRow(-1)
-        else
-            setSelectedMoreRow(pos)
+    function areFilesEqual(f1, f2) {
+        let areEqual = true
+        if((f1 !== null && f2 !== null) && Object.keys(f1).length === Object.keys(f2).length) {
+            for(let i = 0; i < Object.keys(f1).length; i++) {
+                if(!(Object.keys(f1)[i] === Object.keys(f2)[i] 
+                    && Object.values(f1)[i] === Object.values(f2)[i])) {
+                        areEqual = false
+                }
+            }
+        } else 
+            areEqual = false
+
+        return areEqual
+    }
+
+    function handleRowsMoreOptionsClick(e, file) {
+        console.log(areFilesEqual(file, selectedFileActions))
+        if(areFilesEqual(file, selectedFileActions)){
+            dispatch({
+                type: 'changeSelectedFileActions',
+                value: null
+            })
+        } else{
+            dispatch({
+                type: 'changeSelectedFileActions',
+                value: file
+            })
+        }
 
         e.stopPropagation()
     }
 
     function handleNavigateDirClick(file) {
         if(file.type !== "file") {
-            setSelectedMoreRow(-1)
-            props.navigateToDir(file.file_name)
+            dispatch({
+                type: 'changeSelectedFileActions',
+                value: null
+            })
+            navigateToDir(file.file_name)
         }
-
     }
 
     return (
         <div className="table-container">
             <div className="table-actions">
-                <button onClick={props.goBack}><img src="./assets/icons/back_arrow_icon.svg" alt="" /></button>
-                <p className="dark-text">{"./" + props.currDir.join("/")}</p>
+                <button onClick={goBack}><img src="./assets/icons/back_arrow_icon.svg" alt="" /></button>
+                <p className="dark-text">{"./" + dirs.join("/")}</p>
             </div>
             <table>
                 <thead>
@@ -49,26 +73,25 @@ function Table(props) {
                     </tr>
                 </thead>
                 <tbody>
-                {
-                    props.data && props.data.map((file, i) => 
-                    <tr key={file.file_name}
-                        onClick={() => handleNavigateDirClick(file)}>
-                        <td><div className="file-type"></div></td>
-                        <td className="dark-text">{ file.file_name }</td>
-                        
-                        <td className="light-text">{ formatDate(file.file_created_at) }</td>
-                        <td className="light-text">{ file.file_size }</td>
-                        <td>
-                            <button className="more-btn" onClick={e => handleRowsMoreOptionsClick(e, i)}>
-                                <img src="./assets/icons/three_dot_icon.svg" alt="" />
-                                { selectedMoreRow === i &&
-                                    <ActionsPopUp
-                                        file={ file }
-                                        deleteFile={ props.deleteFile }/> }
-                            </button>
-                        </td>
-                    </tr>)
-                }
+                { props.data && props.data.map(file =>
+                    (props.searchText === '' || file.file_name.includes(props.searchText)) &&
+                        <tr key={file.file_name}
+                            onClick={() => handleNavigateDirClick(file)}>
+                            <td><div className="file-type"></div></td>
+                            <td className="dark-text">{ file.file_name }</td>
+                            
+                            <td className="light-text">{ formatDate(file.file_created_at) }</td>
+                            <td className="light-text">{ file.file_size }</td>
+                            <td>
+                                <span className="more-btn" onClick={e => handleRowsMoreOptionsClick(e, file)}>
+                                    <img src="./assets/icons/three_dot_icon.svg" alt="" />
+
+                                    { areFilesEqual(selectedFileActions, file) &&
+                                        <ActionsPopUp
+                                            handlePopupDisplay={handleRowsMoreOptionsClick} /> }
+                                </span>
+                            </td>
+                        </tr>) }
                 </tbody>
             </table>
         </div>

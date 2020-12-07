@@ -1,0 +1,54 @@
+@import '../colors.scss';
+@import '../variables.scss';
+
+.create-folder-field-container {
+    display: flex;
+    flex-direction: row;
+    filter: drop-shadow($box-shadow);
+    border: 1px solid #4e9e3f;
+    border-radius: .4rem;
+    height: fit-content;
+    margin: auto 0;
+
+    .folder-name-field {
+        width: 200px;
+        height: 1.5rem;
+        font-size: 1.15rem;
+        margin: 1rem;
+    }
+
+    .close-btn {
+        opacity: .6;
+        margin-right: .5rem;
+
+        img {
+            width: 1.5rem;
+        }
+    }
+
+    .confirm-btn {
+        background-color: #4e9e3f;
+        width: 2rem;
+        border-top-right-radius: $border-radius-small;
+        border-bottom-right-radius: $border-radius-small;
+        position: relative;
+
+        img {
+            width: 1rem;
+        }
+        
+        &:hover {
+            cursor: pointer;
+        }
+    }
+
+    .confirm-btn,
+    .close-btn {
+        img {
+            display: block;
+            margin: auto;
+            position: relative;
+        }
+    }
+
+}

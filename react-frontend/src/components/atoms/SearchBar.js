@@ -1,13 +1,18 @@
 import React, { useState } from 'react'
 import '../../styles/atoms/search-bar.scss'
 
+/*
+    @props {Function} setSearchText
+*/
 function SearchBar(props) {
-    const [ searchText, setSearchText ] = useState("");
+    function handleSearchTextChange(e) {
+        props.setSearchText(e.target.value)
+    }
 
     return (
         <div className="search-bar-container">
             <img className="search-icon" src="./assets/icons/search_icon.svg" alt="" />
-            <input type="text" onChange={e => setSearchText(e.target.value)} placeholder="Search file"/>
+            <input type="text" onChange={handleSearchTextChange} placeholder="Search file"/>
         </div>
     )
 }

@@ -7,17 +7,25 @@ import ModalBox from './components/blocks/ModalBox'
 import UploadFileBox from './components/blocks/modal_boxes/UploadFileBox'
 import API from './helpers/Api';
 import './styles/views/main-page.scss';
+import { useStateValue } from './state'
+import useFileOperations from './hooks/fileOperationsHook'
+import Toast from './components/atoms/Toast'
+import MoveFileBox from './components/blocks/modal_boxes/MoveFileBox'
+import CreateFolderInput from './components/atoms/CreateFolderInput'
 
 function App() {
-
+  // const [ toast, setToast ] = useState(false)
   const [ data, setData ] = useState([])
-  const [ isConnected, setIsConnected ] = useState(false)
-  const [ socket, setSocket ] = useState()
-
-  const [ dirs, setDirs ] = useState([])
-  const [ newFile, setNewFile ] = useState()
-
+  const [ {
+    isConnected,
+    dirs,
+    toast,
+    displayMoveFileModal,
+    selectedFileActions
+  }, dispatch ] = useStateValue()
   const [ displayUploadFileModal, setDisplayUploadFileModal ] = useState(false)
+  const [ displayCreateFolderInput, setDisplayCreateFolderInput ] = useState(false)
+  const [ searchText, setSearchText ] = useState('')
 
   useEffect(() => {
     console.log(process.env)
@@ -28,42 +36,36 @@ function App() {
         socket.send(JSON.stringify({
             type: "initialConn",
         }));
-        setIsConnected(true)
+        dispatch({
+          type: 'changeIsConnected',
+          value: true
+        })
       };
 
       socket.onmessage = m => {
         setData(JSON.parse(m.data))
       };
-      setSocket(socket)
+
+      dispatch({
+        type: 'changeSocket',
+        value: socket
+      })
     }
   }, [])
 
-  function navigateToDir(dirName) {
-    let newDirStack = [
-      ...dirs,
-      dirName
-    ]
-    const tmp = [...dirs]
-    setDirs(newDirStack)
-    API.changeDir(socket, isConnected, newDirStack, tmp)
+  function resetToast() {
+    dispatch({
+      type: 'resetToast',
+    })
   }
 
-  function goBack() {
-    let dirStack = [...dirs]
-    const tmp = [...dirs]
-
-    dirStack.pop()
-    setDirs(dirStack)
-    API.changeDir(socket, isConnected, dirStack, tmp)
+  function handleMoveFileModal(val) {
+    dispatch({
+      type: 'changeDisplayMoveFileModal',
+      value: val
+    })
   }
 
-  const deleteFile = async (fileName) => {
-    const fileDirToDelete = `${dirs.join('/')}/${fileName}`
-    let res = await API.deleteFile(fileDirToDelete)
-  }
-
-
-  
   return (
     <div className="App">
       <section className="top-bar">
@@ -73,43 +75,49 @@ function App() {
         </div>
       </section>
 
+      <SideBar/>
+      
       <section className="main-content">
-        <SearchBar />
+        <SearchBar setSearchText={setSearchText}/>
 
         <div className="actions">
           <ActionBlock
             label="Add file"
             icon="./assets/icons/add_icon.svg"
             clickHandler={() => setDisplayUploadFileModal(true)}/>
-          <ActionBlock label="Create folder" icon="./assets/icons/add_icon.svg" />
+
+          <ActionBlock
+            label="Create folder"
+            icon="./assets/icons/add_icon.svg"
+            clickHandler={() => setDisplayCreateFolderInput(true)}  />
+
+          { displayCreateFolderInput && <CreateFolderInput closeInput={() => setDisplayCreateFolderInput(false)} />}
+          
+
         </div>
 
         <Table
           data={data}
-          navigateToDir={navigateToDir}
-          goBack={goBack}
-          deleteFile={deleteFile}
-          currDir={dirs} />
+          searchText={searchText} />
       </section>
-
-      <SideBar/>
-
 
       <ModalBox
         component={<UploadFileBox
-          dirs={dirs}
           handleModalToggle={setDisplayUploadFileModal} />}
         isDisplayed={displayUploadFileModal}
         handleModalToggle={setDisplayUploadFileModal} />
-      
-      
-{/* 
-      <input type="file" onChange={e => {setNewFile(e.target.files[0]); console.log(e.target.files[0])}}/>
-      <button onClick={submitNewFile}>Add file</button>  */}
 
-      {/* <input type="text" placeholder="cd ..." onChange={currDirOnChange}/> */}
-      {/* <h5>{currDir}</h5>
-      <button onClick={() => changeDir(currDir)}>cd ...</button>*/}
+      <ModalBox
+        component={<MoveFileBox
+          file={selectedFileActions}
+          handleModalToggle={handleMoveFileModal} />}
+        isDisplayed={displayMoveFileModal}
+        handleModalToggle={handleMoveFileModal} />
+      
+      <Toast
+        { ...toast }
+        resetToast={resetToast} />
+        
     </div>
   );
 }
