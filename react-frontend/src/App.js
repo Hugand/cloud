@@ -11,6 +11,7 @@ import { useStateValue } from './state'
 import useFileOperations from './hooks/fileOperationsHook'
 import Toast from './components/atoms/Toast'
 import MoveFileBox from './components/blocks/modal_boxes/MoveFileBox'
+import CreateFolderInput from './components/atoms/CreateFolderInput'
 
 function App() {
   // const [ toast, setToast ] = useState(false)
@@ -23,7 +24,7 @@ function App() {
     selectedFileActions
   }, dispatch ] = useStateValue()
   const [ displayUploadFileModal, setDisplayUploadFileModal ] = useState(false)
-  // const [ displayMoveFileModal, setDisplayMoveFileModal ] = useState(false)
+  const [ displayCreateFolderInput, setDisplayCreateFolderInput ] = useState(false)
 
   useEffect(() => {
     console.log(process.env)
@@ -83,7 +84,15 @@ function App() {
             label="Add file"
             icon="./assets/icons/add_icon.svg"
             clickHandler={() => setDisplayUploadFileModal(true)}/>
-          <ActionBlock label="Create folder" icon="./assets/icons/add_icon.svg" />
+
+          <ActionBlock
+            label="Create folder"
+            icon="./assets/icons/add_icon.svg"
+            clickHandler={() => setDisplayCreateFolderInput(true)}  />
+
+          { displayCreateFolderInput && <CreateFolderInput closeInput={() => setDisplayCreateFolderInput(false)} />}
+          
+
         </div>
 
         <Table

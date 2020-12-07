@@ -1,8 +1,20 @@
 
 class API {
+    JSON_HEADERS = {
+        'Content-Type': 'application/json'
+    }
+
     static async deleteFile(fileDirToDelete) {
         return await fetch(`${process.env.REACT_APP_API_URL}/delete/${encodeURIComponent(fileDirToDelete)}`, {
             method: "DELETE"
+        })
+        .then(res => res.json())
+    }
+
+    static async createDir(dirPathName) {
+        return await fetch(`${process.env.REACT_APP_API_URL}/mkdir`, {
+            method: "POST",
+            body: JSON.stringify({ dirPathName })
         })
         .then(res => res.json())
     }

@@ -1,22 +1,23 @@
-package org.ugomes.helpers;
+package helpers;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 import javax.ws.rs.core.MultivaluedMap;
 import org.jboss.resteasy.plugins.providers.multipart.InputPart;
-import java.net.URLDecoder;
 
 public class FileHelpers {
     static public String getDirNameFromMultipartFormData(Map<String, List<InputPart>>  uploadForm) {
         for (InputPart inputPart: uploadForm.get("dir")) {
             try {
                 MultivaluedMap<String, String> header = inputPart.getHeaders();
-                String dirToUpload = URLDecoder.decode(inputPart.getBody(String.class, null));
 
-                return dirToUpload;
+                return URLEncoder.encode(inputPart.getBody(String.class, null), StandardCharsets.UTF_8.toString());
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -33,21 +34,24 @@ public class FileHelpers {
             if ((filename.trim().startsWith("filename"))) {
 
                 String[] name = filename.split("=");
-                
-                String finalFileName = URLDecoder.decode(name[1].trim().replaceAll("\"", ""));
-                return finalFileName;
+
+                try {
+                    return URLEncoder.encode(name[1].trim().replaceAll("\"", ""), StandardCharsets.UTF_8.toString());
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
             }
         }
         return "unknown";
     }
 
     //save to somewhere
-    static public void writeFile(byte[] content, String filename) throws IOException {
-
+    static public boolean writeFile(byte[] content, String filename) throws IOException {
         File file = new File(filename);
+        boolean fileCreateResult = false;
 
         if (!file.exists()) {
-            file.createNewFile();
+            fileCreateResult = file.createNewFile();
         }
 
         FileOutputStream fop = new FileOutputStream(file);
@@ -56,5 +60,6 @@ public class FileHelpers {
         fop.flush();
         fop.close();
 
+        return fileCreateResult;
     }
 }

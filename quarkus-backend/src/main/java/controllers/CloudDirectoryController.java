@@ -1,20 +1,14 @@
-package org.ugomes.controllers;
+package controllers;
 
 import java.io.File;
-import org.ugomes.configs.CloudProperties;
-import javax.inject.Inject;
+import configs.CloudProperties;
 import java.util.*;
-import java.util.stream.*;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.io.IOException;
 
 public class CloudDirectoryController {
-    public CloudDirectoryController() { 
-    }
-
-    @Inject
-    CloudProperties cloud = new CloudProperties();
+    public CloudDirectoryController() { }
 
     public Set<Map<String, String>> getFilesList(String subDir) throws IOException  {
         Set<Map<String, String>> fileList = new HashSet<>();
@@ -39,7 +33,7 @@ public class CloudDirectoryController {
 	        for (Path path : stream) {
                 String fileType = this.getFileType(path.toFile());
                 
-                if(fileType == "folder") {
+                if(fileType.equals("folder")) {
                     String folderName = path.getFileName().toString();
                     folderList.add(folderName);
                 }

@@ -1,29 +1,25 @@
-package org.ugomes.websockets;
-
 import javax.enterprise.context.ApplicationScoped;
 import javax.websocket.OnClose;
 import javax.websocket.OnError;
 import javax.websocket.OnMessage;
 import javax.websocket.OnOpen;
-import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 import javax.websocket.Session;
 import java.util.*;
-import java.util.stream.*;
-import org.ugomes.controllers.CloudDirectoryController;
+import controllers.CloudDirectoryController;
 import com.google.gson.Gson; 
 import java.nio.file.NoSuchFileException;
 
 @ServerEndpoint("/cloud_websocket")         
 @ApplicationScoped
 public class CloudWebSocket {
-    private ArrayList<Session> sessionsBuff = new ArrayList<>();
-    private Map<String, ArrayList<Session>> sessions = new HashMap<>();
-    private Timer timer = new Timer();
-    private Gson gson = new Gson();
+    private final ArrayList<Session> sessionsBuff = new ArrayList<>();
+    private final Map<String, ArrayList<Session>> sessions = new HashMap<>();
+    private final Gson gson = new Gson();
 
     CloudWebSocket() {
-        sessions.put("./", new ArrayList<Session>());
+        sessions.put("./", new ArrayList<>());
+        Timer timer = new Timer();
         timer.schedule(new CloudFilesTimer(this), 0, 1000);
     }
 
@@ -45,41 +41,33 @@ public class CloudWebSocket {
 
     @OnMessage
     public void onMessage(Session session, String message) {
-        Map<String, String> clientData = gson.fromJson(message,  Map.class);
+        Map clientData = gson.fromJson(message,  Map.class);
 
-        switch(clientData.get("type")) {
-            case "initialConn":
-                sessions.get("./").add(session);
-                sessionsBuff.remove(session); 
-                break;
-            case "cd":
-                System.out.println(clientData);
-                this.changeDirectory(session, clientData);
-                break;
+        Object type = clientData.get("type");
+        if ("initialConn".equals(type)) {
+            sessions.get("./").add(session);
+            sessionsBuff.remove(session);
+        } else if ("cd".equals(type)) {
+            System.out.println(clientData);
+            this.changeDirectory(session, clientData);
         }
         System.out.println(sessions);
     }
 
     public void broadcastAll(String message) {
-        sessions.values().forEach(r -> {
-            r.forEach(s -> {
-                s.getAsyncRemote().sendObject(message, result -> {
-                    if (result.getException() != null) {
-                        System.out.println("Unable to send message: " + result.getException());
-                    }
-                });
-            });
-        });
+        sessions.values().forEach(r -> r.forEach(s -> s.getAsyncRemote().sendObject(message, result -> {
+            if (result.getException() != null) {
+                System.out.println("Unable to send message: " + result.getException());
+            }
+        })));
     }
 
     public void broadcastDir(String currDir, String message) {
-        sessions.get(currDir).forEach(s -> {
-            s.getAsyncRemote().sendObject(message, result -> {
-                if (result.getException() != null) {
-                    System.out.println("Unable to send message: " + result.getException());
-                }
-            });
-        });
+        sessions.get(currDir).forEach(s -> s.getAsyncRemote().sendObject(message, result -> {
+            if (result.getException() != null) {
+                System.out.println("Unable to send message: " + result.getException());
+            }
+        }));
     }
 
     public void broadcastSession(Session session, String message) {
@@ -94,17 +82,14 @@ public class CloudWebSocket {
 
     private void deleteSession(Session session) {
         for(String dir : sessions.keySet()) {
-            if(sessions.get(dir).contains(session)) {
-                sessions.get(dir).remove(session);
-            }
+            sessions.get(dir).remove(session);
         }
     }
 
     private void changeDirectory(Session session, Map<String, String> clientData) {
         String currentDir = clientData.get("directory");
         String prevDir = clientData.get("prevDir");
-        if(sessions.get(currentDir) == null)
-            sessions.put(currentDir, new ArrayList<Session>());
+        sessions.computeIfAbsent(currentDir, k -> new ArrayList<>());
         
         sessions.get(currentDir).add(session);
         sessions.get(prevDir).remove(session);
@@ -112,15 +97,12 @@ public class CloudWebSocket {
 }
 
 class CloudFilesTimer extends TimerTask {
-    private CloudDirectoryController cloudDirectoryController = new CloudDirectoryController();
-    private CloudWebSocket cloudWebSocket;
-    private Gson gson = new Gson();
+    private final CloudDirectoryController cloudDirectoryController = new CloudDirectoryController();
+    private final CloudWebSocket cloudWebSocket;
+    private final Gson gson = new Gson();
 
     public CloudFilesTimer(CloudWebSocket cloudWebSocket) {
         this.cloudWebSocket = cloudWebSocket;
-        // for(String dir : this.cloudWebSocket.getSessions().keySet()) {
-        //     this.lastFileList.put(dir, new HashSet<Map<String, String>>());
-        // }
     }
 
     public void run() {

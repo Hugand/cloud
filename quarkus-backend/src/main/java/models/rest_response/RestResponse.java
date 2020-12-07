@@ -1,11 +1,10 @@
-package org.ugomes.models.rest_response;
+package models.rest_response;
 
 import java.lang.String;
 
 public class RestResponse {
     public String status;
     public String desc = "";
-
 
     public RestResponse() {}
 

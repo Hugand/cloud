@@ -4,6 +4,39 @@ import { useStateValue } from '../state'
 function useFileOperations() {
     const [ {dirs, socket, isConnected }, dispatch ] = useStateValue()
 
+    const createDir = async newDirName => {
+        const dirStack = [ ...dirs ]
+        dirStack.push(newDirName)
+
+        const dirPathName = `./${dirs.join('/')}`
+        const res = await API.createDir(dirPathName)
+        const toastData = {
+            icon: 'error_icon.svg',
+            msg: '',
+            isVisible: true
+        }
+
+        switch(res.status) {
+            case 'success':
+                toastData.msg = "Success: Folder created!"
+                toastData.icon = 'success_icon.svg'
+                break
+            case 'error':
+                if(res.desc === 'FILE_ALREADY_EXISTS')
+                    toastData.msg = `Error: Folder '${dirPathName}' already exists.`
+                else
+                    toastData.msg = `Error: Failed to create folder '${dirPathName}'.`
+                break;
+            default:
+                toastData.msg = `Error: Failed to create folder '${dirPathName}'.`
+        }
+
+        dispatch({
+            type: 'changeToast',
+            value: toastData
+        })
+    }
+
     const navigateToDir = dirName => {
         let newDirStack = [
         ...dirs,
@@ -164,7 +197,8 @@ function useFileOperations() {
         deleteFile,
         renameFile,
         moveFile,
-        getFoldersInDir
+        getFoldersInDir,
+        createDir
     }
 }
 

@@ -1,7 +1,8 @@
-package org.ugomes.models.rest_response;
+package models.rest_response;
+
 import java.util.HashSet;
 import java.util.Set;
-import org.ugomes.models.rest_response.RestResponse;
+import models.rest_response.RestResponse;
 
 public class GetFoldersInDirResponse extends RestResponse {
     public Set<String> folderList;

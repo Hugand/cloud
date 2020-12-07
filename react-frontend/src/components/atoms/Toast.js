@@ -15,7 +15,7 @@ function Toast(props) {
             setTimeout(() =>{
                 setWaitingForTimeout(false)
                 props.resetToast()
-            }, 3000)
+            }, 5000)
         }
     }, [props.isVisible])
 
