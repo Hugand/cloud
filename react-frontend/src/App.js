@@ -25,6 +25,7 @@ function App() {
   }, dispatch ] = useStateValue()
   const [ displayUploadFileModal, setDisplayUploadFileModal ] = useState(false)
   const [ displayCreateFolderInput, setDisplayCreateFolderInput ] = useState(false)
+  const [ searchText, setSearchText ] = useState('')
 
   useEffect(() => {
     console.log(process.env)
@@ -77,7 +78,7 @@ function App() {
       <SideBar/>
       
       <section className="main-content">
-        <SearchBar />
+        <SearchBar setSearchText={setSearchText}/>
 
         <div className="actions">
           <ActionBlock
@@ -96,7 +97,8 @@ function App() {
         </div>
 
         <Table
-          data={data} />
+          data={data}
+          searchText={searchText} />
       </section>
 
       {/* TODO: Remove dirs from UploadFileBox component!!!! */}

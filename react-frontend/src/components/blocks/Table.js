@@ -6,6 +6,7 @@ import ActionsPopUp from '../atoms/ActionsPopUp'
 
 /*
     @props {array} data
+    @props {String} searchText
 */
 function Table(props) {
     const [ { dirs, selectedFileActions }, dispatch ] = useStateValue()
@@ -72,26 +73,25 @@ function Table(props) {
                     </tr>
                 </thead>
                 <tbody>
-                {
-                    props.data && props.data.map(file => 
-                    <tr key={file.file_name}
-                        onClick={() => handleNavigateDirClick(file)}>
-                        <td><div className="file-type"></div></td>
-                        <td className="dark-text">{ file.file_name }</td>
-                        
-                        <td className="light-text">{ formatDate(file.file_created_at) }</td>
-                        <td className="light-text">{ file.file_size }</td>
-                        <td>
-                            <span className="more-btn" onClick={e => handleRowsMoreOptionsClick(e, file)}>
-                                <img src="./assets/icons/three_dot_icon.svg" alt="" />
+                { props.data && props.data.map(file =>
+                    (props.searchText === '' || file.file_name.includes(props.searchText)) &&
+                        <tr key={file.file_name}
+                            onClick={() => handleNavigateDirClick(file)}>
+                            <td><div className="file-type"></div></td>
+                            <td className="dark-text">{ file.file_name }</td>
+                            
+                            <td className="light-text">{ formatDate(file.file_created_at) }</td>
+                            <td className="light-text">{ file.file_size }</td>
+                            <td>
+                                <span className="more-btn" onClick={e => handleRowsMoreOptionsClick(e, file)}>
+                                    <img src="./assets/icons/three_dot_icon.svg" alt="" />
 
-                                { areFilesEqual(selectedFileActions, file) &&
-                                    <ActionsPopUp
-                                        handlePopupDisplay={handleRowsMoreOptionsClick} /> }
-                            </span>
-                        </td>
-                    </tr>)
-                }
+                                    { areFilesEqual(selectedFileActions, file) &&
+                                        <ActionsPopUp
+                                            handlePopupDisplay={handleRowsMoreOptionsClick} /> }
+                                </span>
+                            </td>
+                        </tr>) }
                 </tbody>
             </table>
         </div>
