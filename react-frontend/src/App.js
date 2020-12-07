@@ -101,10 +101,8 @@ function App() {
           searchText={searchText} />
       </section>
 
-      {/* TODO: Remove dirs from UploadFileBox component!!!! */}
       <ModalBox
         component={<UploadFileBox
-          dirs={dirs}
           handleModalToggle={setDisplayUploadFileModal} />}
         isDisplayed={displayUploadFileModal}
         handleModalToggle={setDisplayUploadFileModal} />

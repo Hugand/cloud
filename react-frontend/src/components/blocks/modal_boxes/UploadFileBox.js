@@ -2,14 +2,16 @@ import React, { useState } from 'react'
 import API from '../../../helpers/Api'
 import FileInput from '../../atoms/FileInput'
 import '../../../styles/blocks/upload-file-box.scss'
+import { useStateValue } from '../../../state'
 
 /*
-    @props {Array} dirs
     @props {Function} handleModalToggle
 */
 function UploadFileBox(props) {
     const GREEN = "#4e9e3f"
     const RED = "#c94444"
+
+    const [ { dirs }, _ ] = useStateValue()
 
     const [ file, setFile ] = useState()
     const [ status, setStatus ] = useState({
@@ -22,7 +24,7 @@ function UploadFileBox(props) {
 
         let reqBody = new FormData()
         reqBody.append("file", file)
-        reqBody.append("dir", encodeURIComponent('./' + props.dirs.join('/')))
+        reqBody.append("dir", encodeURIComponent('./' + dirs.join('/')))
 
         setStatus({
             msg: "Uploading file...",
