@@ -107,12 +107,14 @@ function App() {
             icon="./assets/icons/add_icon.svg"
             clickHandler={() => setDisplayUploadFileModal(true)}/>
 
-          <ActionBlock
-            label="Create folder"
-            icon="./assets/icons/add_icon.svg"
-            clickHandler={() => setDisplayCreateFolderInput(true)}  />
+          
 
-          { displayCreateFolderInput && <CreateFolderInput closeInput={() => setDisplayCreateFolderInput(false)} />}
+          { displayCreateFolderInput 
+            ? <CreateFolderInput closeInput={() => setDisplayCreateFolderInput(false)} />
+            : <ActionBlock
+                label="Create folder"
+                icon="./assets/icons/add_icon.svg"
+                clickHandler={() => setDisplayCreateFolderInput(true)}  />}
           
 
         </div>

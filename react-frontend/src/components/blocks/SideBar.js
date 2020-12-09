@@ -4,6 +4,7 @@ import { useStateValue } from '../../state'
 import '../../styles/blocks/sidebar.scss'
 import Bar from '../atoms/Bar'
 import FileActions from './FileActions'
+import FileTypeStorageList from './FileTypeStorageList'
 
 /*
     @props {Object} storageData
@@ -72,41 +73,11 @@ function SideBar({ storageData }) {
                     <Bar displayData={storageBarDisplayData} />
                 
                 </div>
-                <div className="file-type-desc">
-                        <div className="file">
-                            <div className="file-type-icon"></div>
-                            <label className="file-type dark-text">Image</label>
-                            <label className="space-used light-text">{ getFileSize(storageData.storageInImages) }</label>
-                        </div>
-                        <div className="file">
-                            <div className="file-type-icon"></div>
-                            <label className="file-type dark-text">Videos</label>
-                            <label className="space-used light-text">{ getFileSize(storageData.storageInVideos) }</label>
-                        </div>
-                        <div className="file">
-                            <div className="file-type-icon"></div>
-                            <label className="file-type dark-text">Audio</label>
-                            <label className="space-used light-text">{ getFileSize(storageData.storageInAudio) }</label>
-                        </div>
-                        <div className="file">
-                            <div className="file-type-icon"></div>
-                            <label className="file-type dark-text">Docs</label>
-                            <label className="space-used light-text">{ getFileSize(storageData.storageInDocs) }</label>
-                        </div>
-                        <div className="file">
-                            <div className="file-type-icon"></div>
-                            <label className="file-type dark-text">Others</label>
-                            <label className="space-used light-text">{ getFileSize(storageData.storageInOthers) }</label>
-                        </div>
-                        <div className="file">
-                            <div className="file-type-icon"></div>
-                            <label className="file-type dark-text">Available</label>
-                            <label className="space-used light-text">{ getFileSize(storageData.currentAvailableSpace) }</label>
-                        </div>
-                    </div>
+                
+                <FileTypeStorageList storageData={storageData} />
 
                 { selectedFileActions !== null &&
-                    <FileActions selectedFileActions={selectedFileActions} />
+                    <FileActions />
                 }
             </section>
         </section>

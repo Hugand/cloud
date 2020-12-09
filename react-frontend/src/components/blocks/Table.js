@@ -1,9 +1,8 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { formatDate } from '../../helpers/file'
 import useFileOperations from '../../hooks/fileOperationsHook'
 import { useStateValue } from '../../state'
 import '../../styles/blocks/table.scss'
-import ActionsPopUp from '../atoms/ActionsPopUp'
 
 /*
     @props {array} data
@@ -84,10 +83,6 @@ function Table(props) {
                             <td>
                                 <span className="more-btn" onClick={e => handleRowsMoreOptionsClick(e, file)}>
                                     <img src="./assets/icons/three_dot_icon.svg" alt="" />
-
-                                    { areFilesEqual(selectedFileActions, file) &&
-                                        <ActionsPopUp
-                                            handlePopupDisplay={handleRowsMoreOptionsClick} /> }
                                 </span>
                             </td>
                         </tr>) }
