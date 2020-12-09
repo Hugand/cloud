@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { getFileSize } from '../../helpers/file'
 import { useStateValue } from '../../state'
 import '../../styles/blocks/sidebar.scss'
+import Bar from '../atoms/Bar'
 
 /*
     @props {Object} storageData
@@ -59,22 +60,16 @@ function SideBar({ storageData }) {
                         <h1>{ getFileSize(storageData.currentUsedSpace) }</h1>
                         <p>{ getFileSize(storageData.currentAvailableSpace) } available</p>
                     </div>
-                    {/* TODO: Convert these bars to components */}
-                    <div className="bar space-bar">
-                        <div className={'space-filler curr-space'}
-                            style={{width: getPercentageFromBytes(
-                                storageData.currentUsedSpace,
-                                storageData.maxAvailableSpace
-                            ) + '%'}}></div>
-                    </div>
-                    <div className="bar file-type-space-bar">
-                        { storageBarDisplayData.length > 0 &&
-                            storageBarDisplayData.map(fileType => 
-                                <div key={fileType.class}
-                                    className={'space-filler ' + fileType.class}
-                                    style={{width: fileType.sizePercentage + '%'}}></div>
-                            ) }
-                    </div>
+                    <Bar displayData={[{
+                        class: 'curr-space',
+                        sizePercentage: getPercentageFromBytes(
+                            storageData.currentUsedSpace,
+                            storageData.maxAvailableSpace
+                        )
+                    }]} />
+                    
+                    <Bar displayData={storageBarDisplayData} />
+                
                 </div>
                 <div className="file-type-desc">
                         <div className="file">
