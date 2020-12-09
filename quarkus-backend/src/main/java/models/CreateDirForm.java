@@ -1,7 +1,5 @@
 package models;
 
-import org.jboss.resteasy.annotations.jaxrs.FormParam;
-
 public class CreateDirForm {
     public String dirPathName;
 

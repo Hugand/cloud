@@ -16,6 +16,7 @@ import CreateFolderInput from './components/atoms/CreateFolderInput'
 function App() {
   // const [ toast, setToast ] = useState(false)
   const [ data, setData ] = useState([])
+  const [ storageData, setStorageData ] = useState({})
   const [ {
     isConnected,
     dirs,
@@ -43,7 +44,27 @@ function App() {
       };
 
       socket.onmessage = m => {
-        setData(JSON.parse(m.data))
+        const parsedData = JSON.parse(m.data)
+
+        if(parsedData.type === "success"){
+          setData([ ...parsedData.filesList.sort((a, b) => a.file_name > b.file_name) ])
+          setStorageData({ ...parsedData.cloudStorage })
+        } else if(parsedData.type === "error"){
+          dispatch({
+            type: 'changeDirs',
+            value: ['.']
+          })
+          setData(null)
+          if(parsedData.desc === "INVALID_DIR")
+            dispatch({
+              action: 'changeToast',
+              value: {
+                msg: 'Error: Invalid directory!',
+                icon: 'error_icon.svg',
+                isVisible: true
+              }
+            })
+        }
       };
 
       dispatch({
@@ -75,7 +96,7 @@ function App() {
         </div>
       </section>
 
-      <SideBar/>
+      <SideBar storageData={storageData}/>
       
       <section className="main-content">
         <SearchBar setSearchText={setSearchText}/>

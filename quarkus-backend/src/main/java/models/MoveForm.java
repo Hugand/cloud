@@ -1,9 +1,9 @@
 package models;
 
 import javax.ws.rs.FormParam;
+import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.io.UnsupportedEncodingException;
 
 
 public class MoveForm {

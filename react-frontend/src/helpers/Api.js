@@ -23,8 +23,8 @@ class API {
         if (isConnected) {
           const data = {
               type: "cd",
-              directory: './' + dir.join('/'),
-              prevDir: './' + prevDir.join('/')
+              directory: dir.join('/') + '/',
+              prevDir: prevDir.join('/') + '/'
           }
           socket.send(JSON.stringify(data));
         }

@@ -60,7 +60,7 @@ function Table(props) {
         <div className="table-container">
             <div className="table-actions">
                 <button onClick={goBack}><img src="./assets/icons/back_arrow_icon.svg" alt="" /></button>
-                <p className="dark-text">{"./" + dirs.join("/")}</p>
+                <p className="dark-text">{ dirs.join("/") + '/' }</p>
             </div>
             <table>
                 <thead>

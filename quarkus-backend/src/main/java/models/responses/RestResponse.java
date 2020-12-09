@@ -1,6 +1,4 @@
-package models.rest_response;
-
-import java.lang.String;
+package models.responses;
 
 public class RestResponse {
     public String status;

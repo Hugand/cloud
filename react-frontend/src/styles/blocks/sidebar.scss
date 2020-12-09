@@ -50,29 +50,33 @@
             background-color: $light-blue;
             border-radius: 20px;
             position: relative;
+            margin: .5rem 0;
 
-            .imgs {
+            .space-filler {
                 position: absolute;
-                width: 40%;
                 height: 100%;
+                border-radius: 100px;
+            }
+
+            .images {
                 background-color: $red;
-                border-radius: 20px;
             }
 
-            .vids {
-                position: absolute;
-                width: 60%;
-                height: 100%;
+            .videos {
                 background-color: $yellow;
-                border-radius: 20px;
             }
 
-            .docs {
-                position: absolute;
-                width: 80%;
-                height: 100%;
+            .audio {
+                background-color: $orange;
+            }
+
+            .docs,
+            .curr-space {
                 background-color: $blue;
-                border-radius: 20px;
+            }
+
+            .others {
+                background-color: $purple;
             }
         }
 

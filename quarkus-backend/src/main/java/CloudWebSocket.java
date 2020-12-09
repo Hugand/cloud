@@ -1,14 +1,16 @@
-import javax.enterprise.context.ApplicationScoped;
-import javax.websocket.OnClose;
-import javax.websocket.OnError;
-import javax.websocket.OnMessage;
-import javax.websocket.OnOpen;
-import javax.websocket.server.ServerEndpoint;
-import javax.websocket.Session;
-import java.util.*;
+import com.google.gson.Gson;
+import configs.CloudProperties;
 import controllers.CloudDirectoryController;
-import com.google.gson.Gson; 
+import models.CloudFile;
+import models.CloudStorage;
+import models.responses.WSDataResponse;
+import models.responses.WSResponse;
+
+import javax.enterprise.context.ApplicationScoped;
+import javax.websocket.*;
+import javax.websocket.server.ServerEndpoint;
 import java.nio.file.NoSuchFileException;
+import java.util.*;
 
 @ServerEndpoint("/cloud_websocket")         
 @ApplicationScoped
@@ -21,6 +23,8 @@ public class CloudWebSocket {
         sessions.put("./", new ArrayList<>());
         Timer timer = new Timer();
         timer.schedule(new CloudFilesTimer(this), 0, 1000);
+
+        System.out.println(CloudProperties.MAX_AVAILABLE_SPACE + "");
     }
 
     @OnOpen
@@ -94,6 +98,11 @@ public class CloudWebSocket {
         sessions.get(currentDir).add(session);
         sessions.get(prevDir).remove(session);
     }
+
+    public void deleteDirInSessions(String currDir) {
+        this.sessions.get("./").addAll(this.sessions.get(currDir));
+        this.sessions.remove(currDir);
+    }
 }
 
 class CloudFilesTimer extends TimerTask {
@@ -110,32 +119,24 @@ class CloudFilesTimer extends TimerTask {
 
         for(String dir : sessions.keySet()) {
             try {
-                Set<Map<String, String>> filesList = cloudDirectoryController.getFilesList(dir);
-                String jsonStringified = gson.toJson(filesList);
+                Set<CloudFile> filesList = cloudDirectoryController.getFilesList(dir);
+                CloudStorage cloudStorage = cloudDirectoryController.getAvailableSpaceInBytes();
+                WSDataResponse wsDataResponse = new WSDataResponse("success", filesList, cloudStorage);
+                String wsDataResponseStringified = gson.toJson(wsDataResponse, WSDataResponse.class);
 
-                this.cloudWebSocket.broadcastDir(dir, jsonStringified);
-
-                /*
-                * LEAVE THIS HERE FOR NOW
-                */
-                // if(!filesList.equals(this.lastFileList.get(dir))) {
-                //     this.cloudWebSocket.broadcastDir(dir, jsonStringified);
-                //     this.lastFileList.put(dir, filesList);
-                // }
-
+                this.cloudWebSocket.broadcastDir(dir, wsDataResponseStringified);
             } catch (NoSuchFileException e) {
-                System.out.println(e);
-                Map<String, String> errorDataMap = new HashMap<>();
-                errorDataMap.put("type", "error");
-                errorDataMap.put("error", "invalid_dir");
-
-                String errorData = gson.toJson(errorDataMap);
+                WSResponse wsResponse = new WSResponse("error", "INVALID_DIR");
+                String errorData = gson.toJson(wsResponse, WSResponse.class);
 
                 cloudWebSocket.broadcastDir(dir, errorData);
+
+                this.cloudWebSocket.deleteDirInSessions(dir);
+                System.out.println(e);
             } catch (Exception e) {
+                this.cloudWebSocket.deleteDirInSessions(dir);
                 System.out.println(e);
             }
         }
-
     }
 }

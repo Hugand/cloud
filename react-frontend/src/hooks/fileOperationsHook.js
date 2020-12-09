@@ -8,7 +8,9 @@ function useFileOperations() {
         const dirStack = [ ...dirs ]
         dirStack.push(newDirName)
 
-        const dirPathName = `./${dirs.join('/')}`
+        console.log(dirStack)
+
+        const dirPathName = `./${dirStack.join('/')}`
         const res = await API.createDir(dirPathName)
         const toastData = {
             icon: 'error_icon.svg',
@@ -38,10 +40,7 @@ function useFileOperations() {
     }
 
     const navigateToDir = dirName => {
-        let newDirStack = [
-        ...dirs,
-        dirName
-        ]
+        let newDirStack = [ ...dirs, dirName ]
         const tmp = [...dirs]
         dispatch({
             type: 'changeDirs',

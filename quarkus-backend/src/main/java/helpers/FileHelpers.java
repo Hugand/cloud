@@ -1,5 +1,8 @@
 package helpers;
 
+import org.jboss.resteasy.plugins.providers.multipart.InputPart;
+
+import javax.ws.rs.core.MultivaluedMap;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -8,8 +11,6 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
-import javax.ws.rs.core.MultivaluedMap;
-import org.jboss.resteasy.plugins.providers.multipart.InputPart;
 
 public class FileHelpers {
     static public String getDirNameFromMultipartFormData(Map<String, List<InputPart>>  uploadForm) {
@@ -17,7 +18,7 @@ public class FileHelpers {
             try {
                 MultivaluedMap<String, String> header = inputPart.getHeaders();
 
-                return URLEncoder.encode(inputPart.getBody(String.class, null), StandardCharsets.UTF_8.toString());
+                return URLEncoder.encode(inputPart.getBody(String.class, null), StandardCharsets.UTF_8);
             } catch (IOException e) {
                 e.printStackTrace();
             }
