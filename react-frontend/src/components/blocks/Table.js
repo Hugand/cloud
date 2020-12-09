@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { formatDate } from '../../helpers/file'
 import useFileOperations from '../../hooks/fileOperationsHook'
 import { useStateValue } from '../../state'
 import '../../styles/blocks/table.scss'
@@ -11,8 +12,6 @@ import ActionsPopUp from '../atoms/ActionsPopUp'
 function Table(props) {
     const [ { dirs, selectedFileActions }, dispatch ] = useStateValue()
     const { goBack, navigateToDir } = useFileOperations()
-
-    function formatDate(date) { return (new Date(date)).toDateString().split(" ").slice(1).join(" ")}
 
     function areFilesEqual(f1, f2) {
         let areEqual = true

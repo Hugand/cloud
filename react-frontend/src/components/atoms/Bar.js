@@ -1,19 +1,10 @@
 import React from 'react'
+import '../../styles/atoms/bar.scss'
 
 /*
     @props {Array} displayData
 */
 function Bar({ displayData }) {
-
-    // if()
-    // return <div className="bar space-bar">
-    //     <div className={'space-filler curr-space'}
-    //         style={{width: getPercentageFromBytes(
-    //             storageData.currentUsedSpace,
-    //             storageData.maxAvailableSpace
-    //         ) + '%'}}></div>
-    // </div>
-
     return (
         <div className="bar file-type-space-bar">
             { displayData.length > 0 &&

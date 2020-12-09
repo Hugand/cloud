@@ -3,6 +3,7 @@ import { getFileSize } from '../../helpers/file'
 import { useStateValue } from '../../state'
 import '../../styles/blocks/sidebar.scss'
 import Bar from '../atoms/Bar'
+import FileActions from './FileActions'
 
 /*
     @props {Object} storageData
@@ -105,31 +106,7 @@ function SideBar({ storageData }) {
                     </div>
 
                 { selectedFileActions !== null &&
-                    <section className="file-info-container">
-                        <header>
-                            <div className="id-row">
-                                <div className="file-type-icon"></div>
-                                <h2 className="file-name">File name</h2>
-                                <label className="file-size light-text">8KB</label>
-                            </div>
-                            <p className="file-last-mod">Last modified Sep 3, 2019</p>
-                        </header>
-                        <div className="action-buttons">
-                            <button className="action-btn">
-                                <img src="./assets/icons/download_icon.svg" alt="" /> <label className="dark-text">Download</label>
-                            </button>
-                            <button className="action-btn">
-                                <img src="./assets/icons/rename_icon.svg" alt="" /> <label className="dark-text">Rename</label>
-                            </button>
-                            <button className="action-btn">
-                                <img src="./assets/icons/move_icon.svg" alt="" /> <label className="dark-text">Move</label>
-                            </button>
-                            <div className="separator"></div>
-                            <button className="action-btn delete-btn">
-                                <img src="./assets/icons/delete_icon.svg" alt="" /> <label className="dark-text">Delete</label>
-                            </button>
-                        </div>
-                    </section>
+                    <FileActions selectedFileActions={selectedFileActions} />
                 }
             </section>
         </section>

@@ -6,9 +6,9 @@
     background-color: white;
     width: 100%;
     height: 100%;
-    
+
     .content {
-        height: calc(100% - 2.5rem);
+        height: calc(100%);
         display: flex;
         flex-direction: column;
         padding: 1.5rem 1rem;
@@ -43,48 +43,16 @@
                 }
             }
             
-            .bar {
-                width: 100%;
-                height: 10px;
-                background-color: $light-blue;
-                border-radius: 20px;
-                position: relative;
-                margin: .5rem 0;
-        
-                .space-filler {
-                    position: absolute;
-                    height: 100%;
-                    border-radius: 100px;
-                }
-        
-                .images {
-                    background-color: $red;
-                }
-        
-                .videos {
-                    background-color: $yellow;
-                }
-        
-                .audio {
-                    background-color: $orange;
-                }
-        
-                .docs,
-                .curr-space {
-                    background-color: $blue;
-                }
-        
-                .others {
-                    background-color: $purple;
-                }
-        
-            }
         }
     
         .file-type-desc {
-            overflow-y: auto;
             display: flex;
             flex-direction: column;
+            flex-shrink: 3;
+            flex-grow: 1;
+            flex-basis: 100px;
+            height: auto;
+            overflow-y: auto;
     
             .file {
                 display: flex;
@@ -118,7 +86,7 @@
             background-color: $bg-blue;
             padding: 1.25rem;
             width: 100%;
-            height: auto;
+            height: fit-content;
             display: flex;
             flex-direction: column;
             margin-top: 1rem;
@@ -162,7 +130,7 @@
             }
     
             .action-buttons {
-                margin-top: 4.125rem;
+                margin-top: 2rem;
     
                 .action-btn {
                     background-color: transparent;

@@ -6,3 +6,5 @@ export function getFileSize(bytes,decimalPoint) {
         i = Math.floor(Math.log(bytes) / Math.log(k));
     return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + sizes[i];
  }
+
+ export function formatDate(date) { return (new Date(date)).toDateString().split(" ").slice(1).join(" ")}
