@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { getFileSize } from '../../helpers/file'
+import { useStateValue } from '../../state'
 import '../../styles/blocks/sidebar.scss'
 
 /*
@@ -8,6 +9,7 @@ import '../../styles/blocks/sidebar.scss'
 function SideBar({ storageData }) {
     // Array of objects { class, sizePercentage }
     const [ storageBarDisplayData, setStorageBarDisplayData ] = useState([])
+    const [ { selectedFileActions }, dispatch ] = useStateValue()
     
     useEffect(() => {
         const {
@@ -51,12 +53,13 @@ function SideBar({ storageData }) {
 
     return (
         <section className="sidebar">
-            <section className="cloud-space-container">
+            <section className="content">
                 <div className="space—usage-display">
                     <div className="labels">
                         <h1>{ getFileSize(storageData.currentUsedSpace) }</h1>
                         <p>{ getFileSize(storageData.currentAvailableSpace) } available</p>
                     </div>
+                    {/* TODO: Convert these bars to components */}
                     <div className="bar space-bar">
                         <div className={'space-filler curr-space'}
                             style={{width: getPercentageFromBytes(
@@ -74,62 +77,65 @@ function SideBar({ storageData }) {
                     </div>
                 </div>
                 <div className="file-type-desc">
-                    <div className="file">
-                        <div className="file-type-icon"></div>
-                        <label className="file-type dark-text">Image</label>
-                        <label className="space-used light-text">{ getFileSize(storageData.storageInImages) }</label>
+                        <div className="file">
+                            <div className="file-type-icon"></div>
+                            <label className="file-type dark-text">Image</label>
+                            <label className="space-used light-text">{ getFileSize(storageData.storageInImages) }</label>
+                        </div>
+                        <div className="file">
+                            <div className="file-type-icon"></div>
+                            <label className="file-type dark-text">Videos</label>
+                            <label className="space-used light-text">{ getFileSize(storageData.storageInVideos) }</label>
+                        </div>
+                        <div className="file">
+                            <div className="file-type-icon"></div>
+                            <label className="file-type dark-text">Audio</label>
+                            <label className="space-used light-text">{ getFileSize(storageData.storageInAudio) }</label>
+                        </div>
+                        <div className="file">
+                            <div className="file-type-icon"></div>
+                            <label className="file-type dark-text">Docs</label>
+                            <label className="space-used light-text">{ getFileSize(storageData.storageInDocs) }</label>
+                        </div>
+                        <div className="file">
+                            <div className="file-type-icon"></div>
+                            <label className="file-type dark-text">Others</label>
+                            <label className="space-used light-text">{ getFileSize(storageData.storageInOthers) }</label>
+                        </div>
+                        <div className="file">
+                            <div className="file-type-icon"></div>
+                            <label className="file-type dark-text">Available</label>
+                            <label className="space-used light-text">{ getFileSize(storageData.currentAvailableSpace) }</label>
+                        </div>
                     </div>
-                    <div className="file">
-                        <div className="file-type-icon"></div>
-                        <label className="file-type dark-text">Videos</label>
-                        <label className="space-used light-text">{ getFileSize(storageData.storageInVideos) }</label>
-                    </div>
-                    <div className="file">
-                        <div className="file-type-icon"></div>
-                        <label className="file-type dark-text">Audio</label>
-                        <label className="space-used light-text">{ getFileSize(storageData.storageInAudio) }</label>
-                    </div>
-                    <div className="file">
-                        <div className="file-type-icon"></div>
-                        <label className="file-type dark-text">Docs</label>
-                        <label className="space-used light-text">{ getFileSize(storageData.storageInDocs) }</label>
-                    </div>
-                    <div className="file">
-                        <div className="file-type-icon"></div>
-                        <label className="file-type dark-text">Others</label>
-                        <label className="space-used light-text">{ getFileSize(storageData.storageInOthers) }</label>
-                    </div>
-                    <div className="file">
-                        <div className="file-type-icon"></div>
-                        <label className="file-type dark-text">Available</label>
-                        <label className="space-used light-text">{ getFileSize(storageData.storageIn) }</label>
-                    </div>
-                </div>
-            </section>
-            <section className="file-info-container">
-                <header>
-                    <div className="id-row">
-                        <div className="file-type-icon"></div>
-                        <h2 className="file-name">File name</h2>
-                        <label className="file-size light-text">8KB</label>
-                    </div>
-                    <p className="file-last-mod">Last modified Sep 3, 2019</p>
-                </header>
-                <div className="action-buttons">
-                    <button className="action-btn">
-                        <img src="./assets/icons/download_icon.svg" alt="" /> <label className="dark-text">Download</label>
-                    </button>
-                    <button className="action-btn">
-                        <img src="./assets/icons/rename_icon.svg" alt="" /> <label className="dark-text">Rename</label>
-                    </button>
-                    <button className="action-btn">
-                        <img src="./assets/icons/move_icon.svg" alt="" /> <label className="dark-text">Move</label>
-                    </button>
-                    <div className="separator"></div>
-                    <button className="action-btn delete-btn">
-                        <img src="./assets/icons/delete_icon.svg" alt="" /> <label className="dark-text">Delete</label>
-                    </button>
-                </div>
+
+                { selectedFileActions !== null &&
+                    <section className="file-info-container">
+                        <header>
+                            <div className="id-row">
+                                <div className="file-type-icon"></div>
+                                <h2 className="file-name">File name</h2>
+                                <label className="file-size light-text">8KB</label>
+                            </div>
+                            <p className="file-last-mod">Last modified Sep 3, 2019</p>
+                        </header>
+                        <div className="action-buttons">
+                            <button className="action-btn">
+                                <img src="./assets/icons/download_icon.svg" alt="" /> <label className="dark-text">Download</label>
+                            </button>
+                            <button className="action-btn">
+                                <img src="./assets/icons/rename_icon.svg" alt="" /> <label className="dark-text">Rename</label>
+                            </button>
+                            <button className="action-btn">
+                                <img src="./assets/icons/move_icon.svg" alt="" /> <label className="dark-text">Move</label>
+                            </button>
+                            <div className="separator"></div>
+                            <button className="action-btn delete-btn">
+                                <img src="./assets/icons/delete_icon.svg" alt="" /> <label className="dark-text">Delete</label>
+                            </button>
+                        </div>
+                    </section>
+                }
             </section>
         </section>
     )
