@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import configs.CloudProperties;
 import controllers.CloudDirectoryController;
 import helpers.FileHelpers;
+import helpers.StorageHelpers;
 import io.smallrye.mutiny.Uni;
 import models.CloudStorage;
 import models.CreateDirForm;
@@ -101,8 +102,13 @@ public class CloudRestController {
                 dirName = CloudProperties.DIR + dirToUpload + fileName;
 
                 if(!(new File(dirName)).exists()) {
-                    boolean createFileResult = FileHelpers.writeFile(bytes,dirName);
-                    return new RestResponse(createFileResult ? "success" : "failed");
+                    System.out.println(bytes.length);
+                    if(bytes.length < StorageHelpers.getCurrentAvailableSpaceInBytes()) {
+                        boolean createFileResult = FileHelpers.writeFile(bytes,dirName);
+                        return new RestResponse(createFileResult ? "success" : "failed");
+                    } else {
+                        return new RestResponse("error", "NOT_ENOUGH_SPACE");
+                    }
                 } else {
                     return new RestResponse("error", "FILE_ALREADY_EXISTS");
                 }
@@ -126,7 +132,7 @@ public class CloudRestController {
         if(!original.exists())
             return new RestResponse("error", "FILE_DOESNT_EXIST");
 
-        if (renamed.exists())
+        if(renamed.exists())
             return new RestResponse("error", "FILE_ALREADY_EXISTS");
 
         boolean success = original.renameTo(renamed);
