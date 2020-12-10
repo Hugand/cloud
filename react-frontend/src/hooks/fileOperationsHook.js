@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import API from '../helpers/Api'
 import { useStateValue } from '../state'
 
@@ -190,6 +191,30 @@ function useFileOperations() {
         }
     }
 
+    const downloadFile = async filename => {
+        const dirStack = [ ...dirs ]
+        dirStack.push(filename)
+        const res = await API.downloadFile(dirStack.join('/'))
+
+        if(res.status === 200) {
+            const blob = await res.blob()
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            a.click();
+        } else if(res.status === 422)
+            dispatch({
+                type: 'changeToast',
+                value: {
+                    msg: 'Error: Invalid file to download',
+                    icon: 'error_icon.svg',
+                    isVisible: true
+                }
+            })
+        
+    }
+
     return {
         navigateToDir,
         goBack,
@@ -197,7 +222,8 @@ function useFileOperations() {
         renameFile,
         moveFile,
         getFoldersInDir,
-        createDir
+        createDir,
+        downloadFile
     }
 }
 

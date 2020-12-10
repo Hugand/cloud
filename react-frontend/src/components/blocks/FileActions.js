@@ -9,7 +9,7 @@ import '../../styles/blocks/file-actions.scss'
     @props {Object} selectedFileActions
 */
 function FileActions() {
-    const { deleteFile, renameFile } = useFileOperations()
+    const { deleteFile, renameFile, downloadFile } = useFileOperations()
     const [ isRenameActive, setIsRenameActive ] = useState(false)
     const [ newName, setNewName ] = useState("")
     const [ { selectedFileActions }, dispatch ] = useStateValue()
@@ -37,6 +37,10 @@ function FileActions() {
         })
     }
 
+    function handleDownloadFile() {
+        downloadFile(selectedFileActions.file_name)
+    }
+
     return (
         <section className="file-info-container">
             <header>
@@ -49,7 +53,7 @@ function FileActions() {
             </header>
             
             <div className="action-buttons">
-                <button className="action-btn">
+                <button className="action-btn" onClick={handleDownloadFile}>
                     <img src="./assets/icons/download_icon.svg" alt="" /> <label className="dark-text">Download</label>
                 </button>
                 

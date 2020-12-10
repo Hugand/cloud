@@ -69,6 +69,10 @@ class API {
             .then(res => res.json())
     }
 
+    static downloadFile(dir) {
+        return fetch(`${process.env.REACT_APP_API_URL}/download/${encodeURIComponent(dir)}`)
+    }
+
 }
 
 export default API

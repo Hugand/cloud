@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import configs.CloudProperties;
 import controllers.CloudDirectoryController;
 import helpers.FileHelpers;
+import io.smallrye.mutiny.Uni;
 import models.CloudStorage;
 import models.CreateDirForm;
 import models.MoveForm;
@@ -19,7 +20,9 @@ import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.Response;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLDecoder;
@@ -47,6 +50,16 @@ public class CloudRestController {
             System.err.println(e);
             return new GetFoldersInDirResponse("error");
         }
+    }
+    @GET
+    @Path("/download/{fileName}")
+    @Produces(MediaType.APPLICATION_OCTET_STREAM)
+    public Response getFile(@PathParam String fileName) {
+        File fileToDownload = new File(CloudProperties.DIR + fileName);
+        if(fileToDownload.exists())
+            return Response.status(200).entity(fileToDownload).build();
+        else
+            return Response.status(422).build();
     }
 
     //    @Produces(MediaType.APPLICATION_JSON)

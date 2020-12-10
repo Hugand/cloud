@@ -19,6 +19,7 @@ function UploadFileBox(props) {
         color: GREEN
     })
 
+    // TODO: Put this function in the fileSomething hook
     async function uploadNewFile(e) {
         e.preventDefault()
 
