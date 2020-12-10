@@ -1,26 +1,33 @@
 package controllers.rest;
 
+import com.google.gson.Gson;
 import configs.CloudProperties;
 import controllers.CloudDirectoryController;
 import helpers.FileHelpers;
+import helpers.StorageHelpers;
+import io.smallrye.mutiny.Uni;
+import models.CloudStorage;
 import models.CreateDirForm;
 import models.MoveForm;
 import models.RenameForm;
-import models.rest_response.GetFoldersInDirResponse;
-import models.rest_response.RestResponse;
+import models.responses.GetFoldersInDirResponse;
+import models.responses.RestResponse;
 import org.apache.commons.io.IOUtils;
 import org.jboss.resteasy.annotations.jaxrs.PathParam;
 import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
 import org.jboss.resteasy.plugins.providers.multipart.InputPart;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
-import com.google.gson.Gson;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.Response;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -45,45 +52,63 @@ public class CloudRestController {
             return new GetFoldersInDirResponse("error");
         }
     }
+    @GET
+    @Path("/download/{fileName}")
+    @Produces(MediaType.APPLICATION_OCTET_STREAM)
+    public Response getFile(@PathParam String fileName) {
+        File fileToDownload = new File(CloudProperties.DIR + fileName);
+        if(fileToDownload.exists())
+            return Response.status(200).entity(fileToDownload).build();
+        else
+            return Response.status(422).build();
+    }
 
     //    @Produces(MediaType.APPLICATION_JSON)
     @POST
     @Path("/mkdir")
     public RestResponse mkdir(String jsonData) {
         CreateDirForm cdf = gson.fromJson(jsonData, CreateDirForm.class);
-
-        System.out.println(CloudProperties.dir + cdf.getDirPathName());
-
-        File newDir = new File(CloudProperties.dir + cdf.getDirPathName());
+        File newDir = new File(CloudProperties.DIR + cdf.getDirPathName());
 
         if (newDir.exists())
             return new RestResponse("error", "FILE_ALREADY_EXISTS");
 
         boolean isSuccessful = newDir.mkdir();
-
         return new RestResponse(isSuccessful ? "success" : "failed");
+    }
+
+    @GET
+    @Path("/getSpace")
+    public CloudStorage getSpace() {
+        return cloudDirectoryController.getAvailableSpaceInBytes();
     }
 
     @POST
     @Path("/upload")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     public RestResponse uploadFile(@MultipartForm MultipartFormDataInput upload) {
-        String fileName = "";
+        String dirName = "";
         Map<String, List<InputPart>> uploadForm = upload.getFormDataMap();
         List<InputPart> inputParts = uploadForm.get("file");
-        String dirToUpload = FileHelpers.getDirNameFromMultipartFormData(uploadForm);
-        
+        String dirToUpload = URLDecoder.decode(
+                FileHelpers.getDirNameFromMultipartFormData(uploadForm), StandardCharsets.UTF_8);
 
         for (InputPart inputPart : inputParts) {
             try {
                 MultivaluedMap<String, String> header = inputPart.getHeaders();
                 InputStream inputStream = inputPart.getBody(InputStream.class,null);
                 byte [] bytes = IOUtils.toByteArray(inputStream);
-                fileName = CloudProperties.dir + "/" + dirToUpload + "/" + FileHelpers.getFileName(header);
+                String fileName = URLDecoder.decode(FileHelpers.getFileName(header), StandardCharsets.UTF_8);
+                dirName = CloudProperties.DIR + dirToUpload + fileName;
 
-                if(!(new File(fileName)).exists()) {
-                    boolean createFileResult = FileHelpers.writeFile(bytes,fileName);
-                    return new RestResponse(createFileResult ? "success" : "failed");
+                if(!(new File(dirName)).exists()) {
+                    System.out.println(bytes.length);
+                    if(bytes.length < StorageHelpers.getCurrentAvailableSpaceInBytes()) {
+                        boolean createFileResult = FileHelpers.writeFile(bytes,dirName);
+                        return new RestResponse(createFileResult ? "success" : "failed");
+                    } else {
+                        return new RestResponse("error", "NOT_ENOUGH_SPACE");
+                    }
                 } else {
                     return new RestResponse("error", "FILE_ALREADY_EXISTS");
                 }
@@ -99,15 +124,15 @@ public class CloudRestController {
     @PUT
     @Path("/rename")
     public RestResponse renameFile(@MultipartForm RenameForm renameFormData) {
-        String originalFileDir = CloudProperties.dir + renameFormData.getFileDir() + renameFormData.getPrevName();
-        String newFileDir = CloudProperties.dir + renameFormData.getFileDir() + renameFormData.getNewName();
+        String originalFileDir = CloudProperties.DIR + renameFormData.getFileDir() + renameFormData.getPrevName();
+        String newFileDir = CloudProperties.DIR + renameFormData.getFileDir() + renameFormData.getNewName();
         File original = new File(originalFileDir);
         File renamed = new File(newFileDir);
 
         if(!original.exists())
             return new RestResponse("error", "FILE_DOESNT_EXIST");
 
-        if (renamed.exists())
+        if(renamed.exists())
             return new RestResponse("error", "FILE_ALREADY_EXISTS");
 
         boolean success = original.renameTo(renamed);
@@ -122,8 +147,8 @@ public class CloudRestController {
     @Path("/move")
     public RestResponse moveFile(@MultipartForm MoveForm moveFormData) {
         moveFormData.print();
-        File original = new File(CloudProperties.dir + moveFormData.getCurrDir() + moveFormData.getFileName());
-        File dest = new File(CloudProperties.dir + moveFormData.getNewDir() + moveFormData.getFileName());
+        File original = new File(CloudProperties.DIR + moveFormData.getCurrDir() + moveFormData.getFileName());
+        File dest = new File(CloudProperties.DIR + moveFormData.getNewDir() + moveFormData.getFileName());
 
         if(!original.exists())
             return new RestResponse("error", "FILE_DOESNT_EXIST");

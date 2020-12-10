@@ -3,184 +3,48 @@
 @import '../components.scss';
 
 .sidebar {
+    background-color: white;
     width: 100%;
     height: 100%;
-    display: grid;
-    grid-template-rows: 50% 50%;
-    background-color: white;
-    padding: 1.5rem 1rem;
 
-    .cloud-space-container {
-        grid-row: 1;
+    .content {
+        height: calc(100%);
         display: flex;
         flex-direction: column;
-
-        .labels {
-            display: flex;
-            flex-direction: row;
-            margin-bottom: 0.5rem;
-
-            h1, p {
-                margin: 0;
-                height: fit-content;
-                vertical-align: bottom;
-            }
-
-            h1 {
-                width: fit-content;
-                color: $dark-font;
-                font-size: 2rem;
-                font-weight: 700;
-                line-height: 2rem;
-            }
-
-            p {
-                color: $light-blue-font;
-                font-size: 0.875rem;
-                font-weight: 600;
-                margin-top: auto;
-                margin-left: auto;
-                vertical-align: baseline;
-            }
-        }
+        padding: 1.5rem 1rem;
+    
+        .space—usage-display {
+            .labels {
+                display: flex;
+                flex-direction: row;
+                margin-bottom: 0.5rem;
         
-        .bar {
-            width: 100%;
-            height: 10px;
-            background-color: $light-blue;
-            border-radius: 20px;
-            position: relative;
-
-            .imgs {
-                position: absolute;
-                width: 40%;
-                height: 100%;
-                background-color: $red;
-                border-radius: 20px;
-            }
-
-            .vids {
-                position: absolute;
-                width: 60%;
-                height: 100%;
-                background-color: $yellow;
-                border-radius: 20px;
-            }
-
-            .docs {
-                position: absolute;
-                width: 80%;
-                height: 100%;
-                background-color: $blue;
-                border-radius: 20px;
-            }
-        }
-
-        .file-type-desc {
-            .file {
-                display: flex;
-                flex-direction: row;
-                margin: 1.75rem 0;
-
-                .file-type-icon {
-                    width: 31px;
-                    height: 31px;
-                    left: 1156px;
-                    top: 181px;
-                    background: $red;
-                    border-radius: 2px;
-                    margin-right: 1rem;
-                }
-
-                .file-type {
-                    display: inline-block;
-                    margin: auto 0;
-                }
-
-                .space-used {
-                    margin: auto 0;
-                    margin-left: auto;
-                }
-            }
-        }
-    }
-
-    .file-info-container {
-        grid-row: 2;
-        border-radius: $border-radius-big;
-        background-color: $bg-blue;
-        padding: 1.25rem;
-        width: 100%;
-        height: fit-content;
-        display: flex;
-        flex-direction: column;
-
-        header {
-            .id-row {
-                display: flex;
-                flex-direction: row;
-                
-                .file-type-icon {
-                    width: 31px;
-                    height: 31px;
-                    left: 1156px;
-                    top: 181px;
-                    background: $red;
-                    border-radius: 2px;
-                    margin: auto 0;
-                    margin-right: 1rem;
-                }
-
-                .file-name {
-                    color: $dark-font;
-                    font-size: 1.25rem;
-                    margin: auto 0;
-                    height: 100%;
-                }
-
-                .file-size {
-                    margin: auto;
-                    margin-right: 0;
+                h1, p {
+                    margin: 0;
+                    height: fit-content;
                     vertical-align: bottom;
                 }
+        
+                h1 {
+                    width: fit-content;
+                    color: $dark-font;
+                    font-size: 2rem;
+                    font-weight: 700;
+                    line-height: 2rem;
+                }
+        
+                p {
+                    color: $light-blue-font;
+                    font-size: 0.875rem;
+                    font-weight: 600;
+                    margin-top: auto;
+                    margin-left: auto;
+                    vertical-align: baseline;
+                }
             }
-
-            .file-last-mod {
-                font-size: 0.75rem;
-                color: $light-font-2;
-                margin: 0;
-                margin-top: .3rem
-            }
+            
         }
-
-        .action-buttons {
-            margin-top: 4.125rem;
-
-            .action-btn {
-                background-color: transparent;
-                border: 0;
-                display: flex;
-                margin: 0.8125rem auto;
-
-                label {
-                    margin-left: 1rem;
-                }
-
-                &:hover, & > *:hover {
-                    cursor: pointer;
-                }
-
-                &.delete-btn > label {
-                    color: #DA3D3D;
-                }
-            }
-
-            .separator {
-                width: 80%;
-                height: 1px;
-                background-color: #C5D0D7;
-                margin: auto;
-            }
-        }
+    
+    
     }
 }

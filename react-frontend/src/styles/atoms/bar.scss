@@ -1,0 +1,40 @@
+@import '../colors.scss';
+@import '../variables.scss';
+@import '../components.scss';
+
+.bar {
+    width: 100%;
+    height: 10px;
+    background-color: $light-blue;
+    border-radius: 20px;
+    position: relative;
+    margin: .5rem 0;
+
+    .space-filler {
+        position: absolute;
+        height: 100%;
+        border-radius: 100px;
+    }
+
+    .images {
+        background-color: $red;
+    }
+
+    .videos {
+        background-color: $yellow;
+    }
+
+    .audio {
+        background-color: $orange;
+    }
+
+    .docs,
+    .curr-space {
+        background-color: $blue;
+    }
+
+    .others {
+        background-color: $purple;
+    }
+
+}

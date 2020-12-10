@@ -19,12 +19,13 @@ function UploadFileBox(props) {
         color: GREEN
     })
 
+    // TODO: Put this function in the fileSomething hook
     async function uploadNewFile(e) {
         e.preventDefault()
 
         let reqBody = new FormData()
         reqBody.append("file", file)
-        reqBody.append("dir", encodeURIComponent('./' + dirs.join('/')))
+        reqBody.append("dir", dirs.join('/')+'/')
 
         setStatus({
             msg: "Uploading file...",

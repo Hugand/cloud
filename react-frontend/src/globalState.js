@@ -1,6 +1,6 @@
 
 export const initialState = {
-    dirs: [],
+    dirs: ['.'],
     socket: null,
     isConnected: false,
     toast: {

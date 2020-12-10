@@ -23,8 +23,8 @@ class API {
         if (isConnected) {
           const data = {
               type: "cd",
-              directory: './' + dir.join('/'),
-              prevDir: './' + prevDir.join('/')
+              directory: dir.join('/') + '/',
+              prevDir: prevDir.join('/') + '/'
           }
           socket.send(JSON.stringify(data));
         }
@@ -67,6 +67,10 @@ class API {
     static getFoldersInDir(dirToList) {
         return fetch(`${process.env.REACT_APP_API_URL}/getFoldersInDir/${encodeURIComponent(dirToList)}`)
             .then(res => res.json())
+    }
+
+    static downloadFile(dir) {
+        return fetch(`${process.env.REACT_APP_API_URL}/download/${encodeURIComponent(dir)}`)
     }
 
 }

@@ -1,0 +1,40 @@
+@import '../colors.scss';
+@import '../variables.scss';
+@import '../components.scss';
+
+
+.file-type-desc {
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 3;
+    flex-grow: 1;
+    flex-basis: 100px;
+    height: auto;
+    overflow-y: auto;
+
+    .file {
+        display: flex;
+        flex-direction: row;
+        margin: .875rem 0;
+
+        .file-type-icon {
+            width: 31px;
+            height: 31px;
+            left: 1156px;
+            top: 181px;
+            background: $red;
+            border-radius: 2px;
+            margin-right: 1rem;
+        }
+
+        .file-type {
+            display: inline-block;
+            margin: auto 0;
+        }
+
+        .space-used {
+            margin: auto 0;
+            margin-left: auto;
+        }
+    }
+}

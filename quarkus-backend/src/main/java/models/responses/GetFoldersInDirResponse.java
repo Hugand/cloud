@@ -1,8 +1,7 @@
-package models.rest_response;
+package models.responses;
 
 import java.util.HashSet;
 import java.util.Set;
-import models.rest_response.RestResponse;
 
 public class GetFoldersInDirResponse extends RestResponse {
     public Set<String> folderList;

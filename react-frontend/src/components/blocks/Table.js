@@ -1,8 +1,8 @@
-import React, { useState } from 'react'
+import React from 'react'
+import { formatDate } from '../../helpers/file'
 import useFileOperations from '../../hooks/fileOperationsHook'
 import { useStateValue } from '../../state'
 import '../../styles/blocks/table.scss'
-import ActionsPopUp from '../atoms/ActionsPopUp'
 
 /*
     @props {array} data
@@ -11,8 +11,6 @@ import ActionsPopUp from '../atoms/ActionsPopUp'
 function Table(props) {
     const [ { dirs, selectedFileActions }, dispatch ] = useStateValue()
     const { goBack, navigateToDir } = useFileOperations()
-
-    function formatDate(date) { return (new Date(date)).toDateString().split(" ").slice(1).join(" ")}
 
     function areFilesEqual(f1, f2) {
         let areEqual = true
@@ -60,7 +58,7 @@ function Table(props) {
         <div className="table-container">
             <div className="table-actions">
                 <button onClick={goBack}><img src="./assets/icons/back_arrow_icon.svg" alt="" /></button>
-                <p className="dark-text">{"./" + dirs.join("/")}</p>
+                <p className="dark-text">{ dirs.join("/") + '/' }</p>
             </div>
             <table>
                 <thead>
@@ -85,10 +83,6 @@ function Table(props) {
                             <td>
                                 <span className="more-btn" onClick={e => handleRowsMoreOptionsClick(e, file)}>
                                     <img src="./assets/icons/three_dot_icon.svg" alt="" />
-
-                                    { areFilesEqual(selectedFileActions, file) &&
-                                        <ActionsPopUp
-                                            handlePopupDisplay={handleRowsMoreOptionsClick} /> }
                                 </span>
                             </td>
                         </tr>) }

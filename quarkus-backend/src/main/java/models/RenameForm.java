@@ -1,9 +1,11 @@
 package models;
 
+import helpers.FileHelpers;
+
 import javax.ws.rs.FormParam;
+import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.io.UnsupportedEncodingException;
 
 public class RenameForm {
     @FormParam("fileDir")
@@ -44,7 +46,8 @@ public class RenameForm {
             String decodedNewName = URLDecoder.decode(this.newName, StandardCharsets.UTF_8.toString());
 
             if(decodedNewName.split("[.]").length <= 1 && this.getPrevName().split("[.]").length > 1)
-                return decodedNewName + "." + this.getPrevName().split("[.]")[1]; // filename + . + file_extension
+                return decodedNewName + "." +
+                        FileHelpers.getFileExtension(this.getPrevName()); // filename + . + file_extension
             else
                 return decodedNewName;
         }catch(UnsupportedEncodingException e) {
