@@ -75,7 +75,11 @@ function Table(props) {
                     (props.searchText === '' || file.file_name.includes(props.searchText)) &&
                         <tr key={file.file_name}
                             onClick={() => handleNavigateDirClick(file)}>
-                            <td><div className="file-type"></div></td>
+                            <td>
+                                <img className="file-type"
+                                    src={`./assets/icons/file_icons/${ file.file_type }_file.svg`}
+                                    alt="file icon" />
+                            </td>
                             <td className="dark-text">{ file.file_name }</td>
                             
                             <td className="light-text">{ formatDate(file.file_created_at) }</td>

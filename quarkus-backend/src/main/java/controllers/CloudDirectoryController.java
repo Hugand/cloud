@@ -30,7 +30,8 @@ public class CloudDirectoryController {
                         path.getFileName().toString(),
                         FileHelpers.getFileSize(path.toFile()),
                         attr.creationTime().toString(),
-                        FileHelpers.getType(path.toFile())
+                        FileHelpers.getType(path.toFile()),
+                        "folder"
                     );
                 } else {
                     cloudFile = new CloudFile(
