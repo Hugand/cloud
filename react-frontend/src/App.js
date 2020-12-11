@@ -31,7 +31,7 @@ function App() {
   useEffect(() => {
     console.log(process.env)
     if (!isConnected) {
-      const socket = new WebSocket(`ws://localhost:8081/cloud_websocket`)
+      const socket = new WebSocket(`ws://localhost:8080/cloud_websocket`)
 
       socket.onopen = () => {
         socket.send(JSON.stringify({
@@ -52,7 +52,7 @@ function App() {
         } else if(parsedData.type === "error"){
           dispatch({
             type: 'changeDirs',
-            value: ['.']
+            value: ['./']
           })
           setData(null)
           if(parsedData.desc === "INVALID_DIR")
@@ -66,6 +66,8 @@ function App() {
             })
         }
       };
+
+      console.log(socket)
 
       dispatch({
         type: 'changeSocket',
