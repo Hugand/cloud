@@ -31,7 +31,7 @@ function App() {
   useEffect(() => {
     console.log(process.env)
     if (!isConnected) {
-      const socket = new WebSocket("ws://localhost:8080/cloud_websocket")
+      const socket = new WebSocket(`ws://localhost:8081/cloud_websocket`)
 
       socket.onopen = () => {
         socket.send(JSON.stringify({

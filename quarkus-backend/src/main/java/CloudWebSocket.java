@@ -25,6 +25,7 @@ public class CloudWebSocket {
         timer.schedule(new CloudFilesTimer(this), 0, 1000);
 
         System.out.println(CloudProperties.MAX_AVAILABLE_SPACE + "");
+	System.out.println("WebSocket running");
     }
 
     @OnOpen
