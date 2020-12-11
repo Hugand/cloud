@@ -1,4 +1,4 @@
-package controllers.rest;
+package controllers;
 
 import com.google.gson.Gson;
 import configs.CloudProperties;

@@ -31,6 +31,7 @@ function App() {
   useEffect(() => {
     console.log(process.env)
     if (!isConnected) {
+      // const socket = new WebSocket(`wss://backend-my-cloud.ugomes.com/cloud_websocket`)
       const socket = new WebSocket(`ws://localhost:8080/cloud_websocket`)
 
       socket.onopen = () => {
@@ -47,7 +48,7 @@ function App() {
         const parsedData = JSON.parse(m.data)
 
         if(parsedData.type === "success"){
-          setData([ ...parsedData.filesList.sort((a, b) => a.file_name > b.file_name) ])
+          setData([ ...parsedData.filesList ])
           setStorageData({ ...parsedData.cloudStorage })
         } else if(parsedData.type === "error"){
           dispatch({

@@ -1,19 +1,20 @@
+package controllers;
+
 import com.google.gson.Gson;
 import configs.CloudProperties;
-import controllers.CloudDirectoryController;
+import helpers.CloudFileSorter;
 import models.CloudFile;
 import models.CloudStorage;
 import models.responses.WSDataResponse;
 import models.responses.WSResponse;
 
-import javax.enterprise.context.ApplicationScoped;
 import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
 import java.nio.file.NoSuchFileException;
 import java.util.*;
 
 @ServerEndpoint("/cloud_websocket")         
-@ApplicationScoped
+//@ApplicationScoped
 public class CloudWebSocket {
     private final ArrayList<Session> sessionsBuff = new ArrayList<>();
     private final Map<String, ArrayList<Session>> sessions = new HashMap<>();
@@ -25,7 +26,7 @@ public class CloudWebSocket {
         timer.schedule(new CloudFilesTimer(this), 0, 1000);
 
         System.out.println(CloudProperties.MAX_AVAILABLE_SPACE + "");
-	    System.out.println("WebSocket running");
+	    System.out.println("WebS ocket running 2");
     }
 
     @OnOpen
@@ -118,20 +119,24 @@ class CloudFilesTimer extends TimerTask {
 
     public void run() {
         Map<String, ArrayList<Session>> sessions = this.cloudWebSocket.getSessions();
+        System.out.println("TIMERING");
 
         for(String dir : sessions.keySet()) {
             try {
-                Set<CloudFile> filesList = cloudDirectoryController.getFilesList(dir);
+                List<CloudFile> filesList = cloudDirectoryController.getFilesList(dir);
+                filesList.sort(new CloudFileSorter());
                 CloudStorage cloudStorage = cloudDirectoryController.getAvailableSpaceInBytes();
                 WSDataResponse wsDataResponse = new WSDataResponse("success", filesList, cloudStorage);
                 String wsDataResponseStringified = gson.toJson(wsDataResponse, WSDataResponse.class);
 
+                System.out.println("Broadcasting dir");
                 this.cloudWebSocket.broadcastDir(dir, wsDataResponseStringified);
             } catch (NoSuchFileException e) {
                 WSResponse wsResponse = new WSResponse("error", "INVALID_DIR");
                 String errorData = gson.toJson(wsResponse, WSResponse.class);
+                System.out.println("Broadcasting dir error");
 
-                cloudWebSocket.broadcastDir(dir, errorData);
+                this.cloudWebSocket.broadcastDir(dir, errorData);
 
                 this.cloudWebSocket.deleteDirInSessions(dir);
                 System.out.println(e);
