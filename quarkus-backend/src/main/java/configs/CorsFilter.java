@@ -1,4 +1,4 @@
-package configs;
+/*package configs;
 
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerResponseContext;
@@ -24,3 +24,5 @@ public class CorsFilter implements ContainerResponseFilter {
             "GET, POST, PUT, DELETE, OPTIONS, HEAD");
     }
 }
+
+*/

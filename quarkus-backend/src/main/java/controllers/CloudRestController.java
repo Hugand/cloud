@@ -38,6 +38,17 @@ public class CloudRestController {
     private final CloudDirectoryController cloudDirectoryController = new CloudDirectoryController();
     private final Gson gson = new Gson();
 
+    public CloudRestController() {
+	    System.out.println("Rest controller running.....");
+    }
+
+    @GET
+    @Path("/rest_test")
+    public String restResponse() {
+	    return CloudProperties.DIR + "dadas -- " + (new File(CloudProperties.DIR + "./dadas")).exists();
+    }
+	    
+
     @GET
     @Path("/getFoldersInDir/{dir}")
     public GetFoldersInDirResponse getFoldersInDir(@PathParam String dir) {
@@ -67,11 +78,12 @@ public class CloudRestController {
     @POST
     @Path("/mkdir")
     public RestResponse mkdir(String jsonData) {
+	   System.out.println(jsonData);
         CreateDirForm cdf = gson.fromJson(jsonData, CreateDirForm.class);
         File newDir = new File(CloudProperties.DIR + cdf.getDirPathName());
 
         if (newDir.exists())
-            return new RestResponse("error", "FILE_ALREADY_EXISTS");
+            return new RestResponse("error" + CloudProperties.DIR + cdf.getDirPathName(), "FILE_ALREADY_EXISTS");
 
         boolean isSuccessful = newDir.mkdir();
         return new RestResponse(isSuccessful ? "success" : "failed");

@@ -119,7 +119,7 @@ class CloudFilesTimer extends TimerTask {
 
     public void run() {
         Map<String, ArrayList<Session>> sessions = this.cloudWebSocket.getSessions();
-        System.out.println("TIMERING");
+        //System.out.println("TIMERING");
 
         for(String dir : sessions.keySet()) {
             try {
@@ -129,7 +129,7 @@ class CloudFilesTimer extends TimerTask {
                 WSDataResponse wsDataResponse = new WSDataResponse("success", filesList, cloudStorage);
                 String wsDataResponseStringified = gson.toJson(wsDataResponse, WSDataResponse.class);
 
-                System.out.println("Broadcasting dir");
+                //System.out.println("Broadcasting dir");
                 this.cloudWebSocket.broadcastDir(dir, wsDataResponseStringified);
             } catch (NoSuchFileException e) {
                 WSResponse wsResponse = new WSResponse("error", "INVALID_DIR");
