@@ -11,7 +11,7 @@ function UploadFileBox(props) {
     const GREEN = "#4e9e3f"
     const RED = "#c94444"
 
-    const [ { dirs }, _ ] = useStateValue()
+    const [ { dirs } ] = useStateValue()
 
     const [ file, setFile ] = useState()
     const [ status, setStatus ] = useState({

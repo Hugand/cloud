@@ -23,7 +23,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLDecoder;
@@ -41,14 +40,7 @@ public class CloudRestController {
     public CloudRestController() {
 	    System.out.println("Rest controller running.....");
     }
-
-    @GET
-    @Path("/rest_test")
-    public String restResponse() {
-	    return CloudProperties.DIR + "dadas -- " + (new File(CloudProperties.DIR + "./dadas")).exists();
-    }
 	    
-
     @GET
     @Path("/getFoldersInDir/{dir}")
     public GetFoldersInDirResponse getFoldersInDir(@PathParam String dir) {

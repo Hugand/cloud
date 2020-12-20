@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { getFileSize } from '../../helpers/file'
 import '../../styles/atoms/file-input.scss'
 

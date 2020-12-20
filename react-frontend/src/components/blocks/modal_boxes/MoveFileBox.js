@@ -8,7 +8,7 @@ import '../../../styles/blocks/move-file-box.scss'
     @props {Function} handleModalToggle
 */
 function MoveFileBox(props) {
-    const [ {}, dispatch ] = useStateValue()
+    const dispatch = useStateValue()[1]
     const [ newDirStack, setNewDirStack ] = useState(['.'])
     const [ foldersList, setFoldersList ] = useState([])
     const { getFoldersInDir, moveFile } = useFileOperations()
