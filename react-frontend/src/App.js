@@ -5,10 +5,8 @@ import Table from './components/blocks/Table'
 import SideBar from './components/blocks/SideBar'
 import ModalBox from './components/blocks/ModalBox'
 import UploadFileBox from './components/blocks/modal_boxes/UploadFileBox'
-import API from './helpers/Api';
 import './styles/views/main-page.scss';
 import { useStateValue } from './state'
-import useFileOperations from './hooks/fileOperationsHook'
 import Toast from './components/atoms/Toast'
 import MoveFileBox from './components/blocks/modal_boxes/MoveFileBox'
 import CreateFolderInput from './components/atoms/CreateFolderInput'
@@ -19,7 +17,6 @@ function App() {
   const [ storageData, setStorageData ] = useState({})
   const [ {
     isConnected,
-    dirs,
     toast,
     displayMoveFileModal,
     selectedFileActions
@@ -31,7 +28,7 @@ function App() {
   useEffect(() => {
     console.log(process.env)
     if (!isConnected) {
-      const socket = new WebSocket("ws://localhost:8080/cloud_websocket")
+      const socket = new WebSocket(`${process.env.REACT_APP_WS_URL}`)
 
       socket.onopen = () => {
         socket.send(JSON.stringify({
@@ -47,12 +44,12 @@ function App() {
         const parsedData = JSON.parse(m.data)
 
         if(parsedData.type === "success"){
-          setData([ ...parsedData.filesList.sort((a, b) => a.file_name > b.file_name) ])
+          setData([ ...parsedData.filesList ])
           setStorageData({ ...parsedData.cloudStorage })
         } else if(parsedData.type === "error"){
           dispatch({
             type: 'changeDirs',
-            value: ['.']
+            value: ['./']
           })
           setData(null)
           if(parsedData.desc === "INVALID_DIR")

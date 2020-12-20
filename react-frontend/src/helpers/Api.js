@@ -65,7 +65,8 @@ class API {
         @param {String} dirToList, example: dir1/dir2/dir3
     */
     static getFoldersInDir(dirToList) {
-        return fetch(`${process.env.REACT_APP_API_URL}/getFoldersInDir/${encodeURIComponent(dirToList)}`)
+        return fetch(`${process.env.REACT_APP_API_URL}/getFoldersInDir/${encodeURIComponent(dirToList)}`,
+		{ mode: 'cors', credentials: 'include' })
             .then(res => res.json())
     }
 

@@ -12,7 +12,7 @@ import FileTypeStorageList from './FileTypeStorageList'
 function SideBar({ storageData }) {
     // Array of objects { class, sizePercentage }
     const [ storageBarDisplayData, setStorageBarDisplayData ] = useState([])
-    const [ { selectedFileActions }, dispatch ] = useStateValue()
+    const [ { selectedFileActions } ] = useStateValue()
     
     useEffect(() => {
         const {

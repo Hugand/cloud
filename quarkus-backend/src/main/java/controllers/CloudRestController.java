@@ -1,4 +1,4 @@
-package controllers.rest;
+package controllers;
 
 import com.google.gson.Gson;
 import configs.CloudProperties;
@@ -23,7 +23,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLDecoder;
@@ -38,6 +37,10 @@ public class CloudRestController {
     private final CloudDirectoryController cloudDirectoryController = new CloudDirectoryController();
     private final Gson gson = new Gson();
 
+    public CloudRestController() {
+	    System.out.println("Rest controller running.....");
+    }
+	    
     @GET
     @Path("/getFoldersInDir/{dir}")
     public GetFoldersInDirResponse getFoldersInDir(@PathParam String dir) {
@@ -67,11 +70,12 @@ public class CloudRestController {
     @POST
     @Path("/mkdir")
     public RestResponse mkdir(String jsonData) {
+	   System.out.println(jsonData);
         CreateDirForm cdf = gson.fromJson(jsonData, CreateDirForm.class);
         File newDir = new File(CloudProperties.DIR + cdf.getDirPathName());
 
         if (newDir.exists())
-            return new RestResponse("error", "FILE_ALREADY_EXISTS");
+            return new RestResponse("error" + CloudProperties.DIR + cdf.getDirPathName(), "FILE_ALREADY_EXISTS");
 
         boolean isSuccessful = newDir.mkdir();
         return new RestResponse(isSuccessful ? "success" : "failed");

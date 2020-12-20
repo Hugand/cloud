@@ -18,8 +18,8 @@ import java.util.*;
 public class CloudDirectoryController {
     public CloudDirectoryController() { }
 
-    public Set<CloudFile> getFilesList(String subDir) throws IOException  {
-        Set<CloudFile> fileList = new HashSet<>();
+    public List<CloudFile> getFilesList(String subDir) throws IOException  {
+        List<CloudFile> fileList = new ArrayList<CloudFile>();
 	    try (DirectoryStream<Path> stream = Files.newDirectoryStream(Paths.get(CloudProperties.DIR + subDir))) {
 	        for (Path path : stream) {
                 CloudFile cloudFile;

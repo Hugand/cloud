@@ -45,7 +45,9 @@ function FileActions() {
         <section className="file-info-container">
             <header>
                 <div className="id-row">
-                    <div className="file-type-icon"></div>
+                    <img className="file-type-icon"
+                        src={`./assets/icons/file_icons/${ selectedFileActions.file_type }_file.svg`}
+                        alt="file icon" />
                     <h2 className="file-name">{ selectedFileActions.file_name }</h2>
                 </div>
                 <label className="file-size light-text">{ selectedFileActions.file_size }</label>
